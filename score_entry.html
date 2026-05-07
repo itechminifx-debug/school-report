@@ -17,47 +17,36 @@
         .detail-item { font-size: 13px; color: #666; }
         .detail-item span { font-weight: 600; color: #333; }
         .section-title { font-size: 18px; font-weight: 700; color: #1e3c72; margin: 20px 0 15px; }
-        .subject-card { background: white; border-radius: 14px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #1e3c72; transition: all 0.3s; }
-        .subject-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .subject-card { background: white; border-radius: 14px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #1e3c72; }
         .subject-name { font-weight: 600; font-size: 16px; color: #1e3c72; margin-bottom: 12px; }
         .score-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
         .score-input-group { display: flex; flex-direction: column; }
         .score-input-group label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
-        .score-input-group input { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; text-align: center; transition: all 0.3s; }
+        .score-input-group input { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; text-align: center; }
         .score-input-group input:focus { outline: none; border-color: #1e3c72; }
         .calculated-total { background: #f0f4fa; padding: 12px 16px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 18px; color: #1e3c72; min-width: 60px; }
         .grade-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; text-align: center; min-width: 40px; }
-        .grade-A { background: #d4edda; color: #155724; }
-        .grade-B { background: #cce5ff; color: #004085; }
-        .grade-C { background: #fff3cd; color: #856404; }
-        .grade-D { background: #ffeeba; color: #856404; }
-        .grade-E { background: #f8d7da; color: #721c24; }
-        .grade-F { background: #f5c6cb; color: #721c24; }
+        .grade-A { background: #d4edda; color: #155724; } .grade-B { background: #cce5ff; color: #004085; }
+        .grade-C { background: #fff3cd; color: #856404; } .grade-D { background: #ffeeba; color: #856404; }
+        .grade-E { background: #f8d7da; color: #721c24; } .grade-F { background: #f5c6cb; color: #721c24; }
         .btn-group { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: 150px; padding: 16px 20px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; }
-        .btn-primary { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,60,114,0.3); }
-        .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; }
-        .btn-secondary { background: #6c757d; color: white; }
+        .btn { flex: 1; min-width: 150px; padding: 16px 20px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; color: white; }
+        .btn-primary { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+        .btn-success { background: #28a745; }
+        .btn-secondary { background: #6c757d; }
         .btn-warning { background: #ffc107; color: #333; }
-        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #333; color: white; padding: 16px; border-radius: 12px; text-align: center; animation: slideUp 0.3s; z-index: 1000; display: none; }
+        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #333; color: white; padding: 16px; border-radius: 12px; text-align: center; z-index: 1000; display: none; }
         .toast.success { background: #28a745; }
-        .toast.error { background: #dc3545; }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @media (max-width: 600px) { .score-row { grid-template-columns: 1fr 1fr; } .calculated-total, .grade-badge { grid-column: span 2; justify-self: center; } .subject-name { font-size: 14px; } }
+        @media (max-width: 600px) { .score-row { grid-template-columns: 1fr 1fr; } .calculated-total, .grade-badge { grid-column: span 2; justify-self: center; } }
     </style>
-    <script src="database.js"></script>
 </head>
 <body>
-
     <div class="navbar">
         <div class="brand">📝 Enter Scores</div>
         <a href="dashboard.html" class="btn-back">🔙 Back to Dashboard</a>
     </div>
-
     <div class="container">
-        <div class="student-info-card" id="studentInfo">
+        <div class="student-info-card">
             <div class="student-name-display" id="studentNameDisplay">Loading...</div>
             <div class="student-details">
                 <div class="detail-item">ID: <span id="studentIdDisplay">-</span></div>
@@ -66,12 +55,8 @@
                 <div class="detail-item">Term: <span id="sessionTerm">-</span></div>
             </div>
         </div>
-
         <div class="section-title">📚 Academic Performance (50% Class + 50% Exam)</div>
-        <div id="subjectsContainer">
-            <p style="text-align:center; color:#999; padding:30px;">Loading subjects...</p>
-        </div>
-
+        <div id="subjectsContainer"><p style="text-align:center;color:#999;padding:30px;">Loading subjects...</p></div>
         <div class="btn-group">
             <button class="btn btn-primary" onclick="saveAllScores()">💾 Save All Scores</button>
             <button class="btn btn-success" onclick="saveAndViewReport()">📊 Save & View Report</button>
@@ -79,184 +64,95 @@
             <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">🔙 Back</button>
         </div>
     </div>
-
     <div class="toast" id="toast"></div>
 
     <script>
-        // ==================== DATA ====================
         var subjectsByCategory = {
             'KG': ['Literacy', 'Numeracy', 'Creative Art', 'Religious and Moral Education', 'Phonics'],
             'LowerPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Religious and Moral Education', 'French', 'Creative Art', 'Phonics'],
             'UpperPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Creative Art', 'Religious and Moral Education', 'Computing', 'Ghanaian Language', 'French'],
             'JHS': ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious and Moral Education', 'Career Technology', 'Computing', 'Ghanaian Language', 'Creative Art', 'French']
         };
-
         var student = null;
         var category = '';
 
-        // ==================== INITIALIZATION ====================
         window.onload = function() {
-            // Get student from sessionStorage
-            var studentData = sessionStorage.getItem('selectedStudent');
-            category = sessionStorage.getItem('category');
-
-            if (studentData) {
-                student = JSON.parse(studentData);
-            }
-
-            if (!student) {
-                alert('No student selected! Please select a student first.');
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            // Display student info
+            // ✅ LOAD FROM LOCAL STORAGE
+            var studentData = localStorage.getItem('selectedStudent');
+            category = localStorage.getItem('currentCategory');
+            if (studentData) { student = JSON.parse(studentData); }
+            if (!student) { alert('No student selected!'); window.location.href = 'dashboard.html'; return; }
             document.getElementById('studentNameDisplay').textContent = student.name;
             document.getElementById('studentIdDisplay').textContent = student.id;
             document.getElementById('studentClassDisplay').textContent = student.class;
             document.getElementById('studentHouseDisplay').textContent = student.house || 'N/A';
-            document.getElementById('sessionTerm').textContent = sessionStorage.getItem('term') || '-';
-
-            // Load subjects
+            document.getElementById('sessionTerm').textContent = localStorage.getItem('currentTerm') || '-';
             loadSubjects();
         };
 
-        // ==================== LOAD SUBJECTS ====================
         function loadSubjects() {
             var subjects = subjectsByCategory[category] || [];
             var container = document.getElementById('subjectsContainer');
-
-            if (subjects.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#999;">No subjects found for this category.</p>';
-                return;
-            }
-
+            if (subjects.length === 0) { container.innerHTML = '<p style="text-align:center;color:#999;">No subjects found.</p>'; return; }
             var html = '';
             subjects.forEach(function(subject) {
-                var subjectId = subject.replace(/\s+/g, '_');
-                html += '<div class="subject-card">';
-                html += '<div class="subject-name">📖 ' + subject + '</div>';
-                html += '<div class="score-row">';
-                html += '<div class="score-input-group"><label>Class Score (50%)</label><input type="number" id="' + subjectId + '_class" placeholder="0-100" min="0" max="100" oninput="calculateSubject(\'' + subjectId + '\')"></div>';
-                html += '<div class="score-input-group"><label>Exam Score (50%)</label><input type="number" id="' + subjectId + '_exam" placeholder="0-100" min="0" max="100" oninput="calculateSubject(\'' + subjectId + '\')"></div>';
-                html += '<div><label style="font-size:11px;color:#888;">Total</label><div class="calculated-total" id="' + subjectId + '_total">-</div></div>';
-                html += '<div><label style="font-size:11px;color:#888;">Grade</label><div class="grade-badge" id="' + subjectId + '_grade">-</div></div>';
+                var sid = subject.replace(/\s+/g, '_');
+                html += '<div class="subject-card"><div class="subject-name">📖 ' + subject + '</div><div class="score-row">';
+                html += '<div class="score-input-group"><label>Class Score (50%)</label><input type="number" id="' + sid + '_class" placeholder="0-100" min="0" max="100" oninput="calc(\'' + sid + '\')"></div>';
+                html += '<div class="score-input-group"><label>Exam Score (50%)</label><input type="number" id="' + sid + '_exam" placeholder="0-100" min="0" max="100" oninput="calc(\'' + sid + '\')"></div>';
+                html += '<div><label style="font-size:11px;color:#888;">Total</label><div class="calculated-total" id="' + sid + '_total">-</div></div>';
+                html += '<div><label style="font-size:11px;color:#888;">Grade</label><div class="grade-badge" id="' + sid + '_grade">-</div></div>';
                 html += '</div></div>';
             });
-
             container.innerHTML = html;
-
-            // Load any previously saved scores
             loadSavedScores();
         }
 
-        // ==================== CALCULATIONS ====================
-        function calculateSubject(subjectId) {
-            var classScore = parseFloat(document.getElementById(subjectId + '_class').value) || 0;
-            var examScore = parseFloat(document.getElementById(subjectId + '_exam').value) || 0;
-
-            var total = (classScore * 0.5) + (examScore * 0.5);
+        function calc(sid) {
+            var cs = parseFloat(document.getElementById(sid + '_class').value) || 0;
+            var es = parseFloat(document.getElementById(sid + '_exam').value) || 0;
+            var total = (cs * 0.5) + (es * 0.5);
             var grade = getGrade(total);
-            var gradeClass = 'grade-' + grade;
-
-            document.getElementById(subjectId + '_total').textContent = total.toFixed(1);
-            var gradeBadge = document.getElementById(subjectId + '_grade');
-            gradeBadge.textContent = grade;
-            gradeBadge.className = 'grade-badge ' + gradeClass;
-
-            autoSaveScore(subjectId, classScore, examScore, total, grade);
+            document.getElementById(sid + '_total').textContent = total.toFixed(1);
+            var gb = document.getElementById(sid + '_grade'); gb.textContent = grade; gb.className = 'grade-badge grade-' + grade;
+            localStorage.setItem('score_' + student.id + '_' + sid, JSON.stringify({ classScore: cs, examScore: es, total: total, grade: grade }));
         }
 
-        function getGrade(score) {
-            if (score >= 80) return 'A';
-            if (score >= 70) return 'B';
-            if (score >= 60) return 'C';
-            if (score >= 50) return 'D';
-            if (score >= 40) return 'E';
-            return 'F';
-        }
-
-        function getInterpretation(grade) {
-            var interpretations = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
-            return interpretations[grade] || '';
-        }
-
-        function getRemarks(score) {
-            if (score >= 80) return 'Outstanding Performance';
-            if (score >= 70) return 'Very Good Work';
-            if (score >= 60) return 'Good Effort';
-            if (score >= 50) return 'Satisfactory';
-            if (score >= 40) return 'Needs Improvement';
-            return 'Unsatisfactory - See Teacher';
-        }
-
-        // ==================== AUTO-SAVE TO LOCAL STORAGE ====================
-        function autoSaveScore(subjectId, classScore, examScore, total, grade) {
-            var key = 'score_' + student.id + '_' + subjectId;
-            var scoreData = { classScore: classScore, examScore: examScore, total: total, grade: grade };
-            localStorage.setItem(key, JSON.stringify(scoreData));
-        }
+        function getGrade(s) { if (s >= 80) return 'A'; if (s >= 70) return 'B'; if (s >= 60) return 'C'; if (s >= 50) return 'D'; if (s >= 40) return 'E'; return 'F'; }
 
         function loadSavedScores() {
             var subjects = subjectsByCategory[category] || [];
             subjects.forEach(function(subject) {
-                var subjectId = subject.replace(/\s+/g, '_');
-                var key = 'score_' + student.id + '_' + subjectId;
-                var saved = localStorage.getItem(key);
+                var sid = subject.replace(/\s+/g, '_');
+                var saved = localStorage.getItem('score_' + student.id + '_' + sid);
                 if (saved) {
-                    var data = JSON.parse(saved);
-                    var classInput = document.getElementById(subjectId + '_class');
-                    var examInput = document.getElementById(subjectId + '_exam');
-                    if (classInput) classInput.value = data.classScore || '';
-                    if (examInput) examInput.value = data.examScore || '';
-                    calculateSubject(subjectId);
+                    var d = JSON.parse(saved);
+                    var ci = document.getElementById(sid + '_class'); if (ci) ci.value = d.classScore || '';
+                    var ei = document.getElementById(sid + '_exam'); if (ei) ei.value = d.examScore || '';
+                    calc(sid);
                 }
             });
         }
 
-        // ==================== SAVE ALL ====================
         function saveAllScores() {
             var subjects = subjectsByCategory[category] || [];
-            var savedCount = 0;
-
+            var count = 0;
             subjects.forEach(function(subject) {
-                var subjectId = subject.replace(/\s+/g, '_');
-                var classScore = parseFloat(document.getElementById(subjectId + '_class').value) || 0;
-                var examScore = parseFloat(document.getElementById(subjectId + '_exam').value) || 0;
-
-                if (classScore > 0 || examScore > 0) {
-                    var total = (classScore * 0.5) + (examScore * 0.5);
-                    var grade = getGrade(total);
-                    autoSaveScore(subjectId, classScore, examScore, total, grade);
-                    savedCount++;
-                }
+                var sid = subject.replace(/\s+/g, '_');
+                var cs = parseFloat(document.getElementById(sid + '_class').value) || 0;
+                var es = parseFloat(document.getElementById(sid + '_exam').value) || 0;
+                if (cs > 0 || es > 0) { calc(sid); count++; }
             });
-
-            showToast(savedCount + ' subjects saved successfully! ✅', 'success');
+            showToast(count + ' subjects saved! ✅');
         }
 
-        function saveAndViewReport() {
-            saveAllScores();
-            setTimeout(function() {
-                window.location.href = 'report_card.html';
-            }, 500);
-        }
+        function saveAndViewReport() { saveAllScores(); setTimeout(function() { window.location.href = 'report_card.html'; }, 500); }
+        function goToPersonality() { saveAllScores(); setTimeout(function() { window.location.href = 'personality_entry.html'; }, 300); }
 
-        function goToPersonality() {
-            saveAllScores();
-            setTimeout(function() {
-                window.location.href = 'personality_entry.html';
-            }, 300);
-        }
-
-        function showToast(message, type) {
-            var toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + (type || 'success');
-            toast.style.display = 'block';
-            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+        function showToast(msg) {
+            var t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast success'; t.style.display = 'block';
+            setTimeout(function() { t.style.display = 'none'; }, 3000);
         }
     </script>
-
 </body>
 </html>
