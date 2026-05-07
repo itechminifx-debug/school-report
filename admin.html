@@ -35,7 +35,6 @@
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .tabs { flex-wrap: wrap; } .tab { font-size: 12px; padding: 10px; } }
     </style>
-    <script src="database.js"></script>
 </head>
 <body>
     <div class="navbar">
@@ -48,6 +47,8 @@
             <button class="tab" onclick="switchTab('teachers')">👤 Teachers</button>
             <button class="tab" onclick="switchTab('classes')">🏫 Classes</button>
             <button class="tab" onclick="switchTab('summary')">📊 Summary</button>
+            <button class="tab" onclick="switchTab('backup')">💾 Backup</button>
+            <button class="tab" onclick="switchTab('settings')">🎨 Settings</button>
         </div>
 
         <!-- STUDENTS PANEL -->
@@ -82,7 +83,7 @@
                 <div class="form-group"><label>Title</label><select id="newTeacherTitle"><option value="Mr.">Mr.</option><option value="Mrs.">Mrs.</option><option value="Ms.">Ms.</option><option value="Dr.">Dr.</option></select></div>
                 <div class="form-group"><label>Full Name *</label><input type="text" id="newTeacherName" placeholder="e.g., Kofi Mensah"></div>
             </div>
-            <div class="form-group"><label>Password</label><input type="text" id="newTeacherPassword" placeholder="Set a password (default: 1234)" value="1234"></div>
+            <div class="form-group"><label>Password</label><input type="text" id="newTeacherPassword" placeholder="Set password" value="1234"></div>
             <button class="btn btn-success" onclick="addTeacher()">➕ Add Teacher</button>
             <hr style="margin: 25px 0;">
             <div class="section-title">📋 Teacher List</div>
@@ -105,155 +106,294 @@
         <div id="panel-summary" class="panel">
             <div class="section-title">📊 System Summary</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #2e7d32;" id="totalStudents">0</div><div style="color: #555;">Total Students</div></div>
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #1565c0;" id="totalTeachers">0</div><div style="color: #555;">Total Teachers</div></div>
-                <div style="background: #fff3e0; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #e65100;">11</div><div style="color: #555;">Classes</div></div>
+                <div style="background:#e8f5e9;padding:20px;border-radius:12px;text-align:center;"><div style="font-size:36px;font-weight:bold;color:#2e7d32;" id="totalStudents">0</div><div style="color:#555;">Total Students</div></div>
+                <div style="background:#e3f2fd;padding:20px;border-radius:12px;text-align:center;"><div style="font-size:36px;font-weight:bold;color:#1565c0;" id="totalTeachers">0</div><div style="color:#555;">Total Teachers</div></div>
+                <div style="background:#fff3e0;padding:20px;border-radius:12px;text-align:center;"><div style="font-size:36px;font-weight:bold;color:#e65100;">11</div><div style="color:#555;">Classes</div></div>
             </div>
+        </div>
+
+        <!-- BACKUP PANEL -->
+        <div id="panel-backup" class="panel">
+            <div class="section-title">💾 Backup & Restore</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div style="background:#e8f5e9;padding:20px;border-radius:12px;text-align:center;">
+                    <div style="font-size:48px;">📥</div>
+                    <h3>Backup Data</h3>
+                    <button class="btn btn-success" onclick="backupData()" style="margin-top:10px;width:100%;">📥 Download Backup</button>
+                </div>
+                <div style="background:#fff3e0;padding:20px;border-radius:12px;text-align:center;">
+                    <div style="font-size:48px;">📤</div>
+                    <h3>Restore Data</h3>
+                    <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="restoreData(event)">
+                    <button class="btn btn-primary" onclick="document.getElementById('restoreFileInput').click()" style="margin-top:10px;width:100%;background:#e65100;">📤 Restore Backup</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS PANEL -->
+        <div id="panel-settings" class="panel">
+            <div class="section-title">🎨 School Branding</div>
+            <div class="form-row">
+                <div class="form-group"><label>School Name</label><input type="text" id="schoolNameInput" placeholder="e.g., Excel Academy"></div>
+                <div class="form-group"><label>School Motto</label><input type="text" id="schoolMottoInput" placeholder="e.g., Excellence in Education"></div>
+            </div>
+            <div class="form-group"><label>School Logo</label><input type="file" id="logoFileInput" accept="image/*" onchange="uploadLogo(event)"></div>
+            <button class="btn btn-success" onclick="saveSettings()" style="width:100%;">💾 Save Branding</button>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
-<script>
-    // ==================== SHARED DATABASE ====================
-    var students = [];
-    var teachers = [];
-    var classLevels = ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'];
+    <script>
+        // ==================== CRITICAL: INITIALIZE WITH SAVED DATA ====================
+        // ✅ ALWAYS load from localStorage FIRST - NEVER start with empty arrays
+        var students = [];
+        var teachers = [];
+        var classLevels = ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'];
 
-    // Load data on startup
-    async function initData() {
-        var loaded = await Database.load();
-        if (!loaded) {
-            Database.loadLocal();
+        function initData() {
+            // ✅ Load students - ONLY use defaults if localStorage is completely empty
+            var savedStudents = localStorage.getItem('admin_students');
+            if (savedStudents !== null && savedStudents !== undefined) {
+                try {
+                    students = JSON.parse(savedStudents);
+                    if (!Array.isArray(students)) students = [];
+                } catch(e) {
+                    students = [];
+                }
+            } else {
+                // First time ever - set defaults
+                students = [
+                    { id: 'STU0001', name: 'John Mensah', gender: 'Male', class: 'KG 1', house: 'Red House' },
+                    { id: 'STU0002', name: 'Ama Serwaa', gender: 'Female', class: 'KG 1', house: 'Blue House' }
+                ];
+                localStorage.setItem('admin_students', JSON.stringify(students));
+            }
+
+            // ✅ Load teachers - ONLY use defaults if localStorage is completely empty
+            var savedTeachers = localStorage.getItem('admin_teachers');
+            if (savedTeachers !== null && savedTeachers !== undefined) {
+                try {
+                    teachers = JSON.parse(savedTeachers);
+                    if (!Array.isArray(teachers)) teachers = [];
+                } catch(e) {
+                    teachers = [];
+                }
+            } else {
+                // First time ever - set defaults
+                teachers = [
+                    { title: 'Mr.', name: 'Mensah', password: '1234' },
+                    { title: 'Mrs.', name: 'Appiah', password: '1234' },
+                    { title: 'Mr.', name: 'Osei', password: '1234' },
+                    { title: 'Ms.', name: 'Asante', password: '1234' },
+                    { title: 'Mr.', name: 'Boadu', password: '1234' }
+                ];
+                localStorage.setItem('admin_teachers', JSON.stringify(teachers));
+            }
         }
-        students = Database.getStudents();
-        teachers = Database.getTeachers();
-        refreshAllTables();
-    }
 
-    function refreshAllTables() {
-        generateStudentID();
-        loadStudentTable();
-        loadTeacherTable();
-        loadClassSummary();
-        loadSummary();
-    }
-
-    // ==================== INITIALIZATION ====================
-    window.onload = async function() {
-        await initData();
-    };
-
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-        document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-        event.target.classList.add('active');
-        document.getElementById('panel-' + tabName).classList.add('active');
-        if (tabName === 'summary') loadSummary();
-        if (tabName === 'classes') loadClassSummary();
-    }
-
-    // ==================== STUDENTS ====================
-    function generateStudentID() {
-        document.getElementById('newStudentID').value = 'STU' + String(students.length + 1).padStart(4, '0');
-    }
-
-    async function addStudent() {
-        var id = document.getElementById('newStudentID').value;
-        var name = document.getElementById('newStudentName').value.trim();
-        var gender = document.getElementById('newStudentGender').value;
-        var className = document.getElementById('newStudentClass').value;
-        var house = document.getElementById('newStudentHouse').value;
-
-        if (!name) { showToast('Please enter student name!', 'error'); return; }
-        if (!className) { showToast('Please select a class!', 'error'); return; }
-
-        await Database.addStudent({ id: id, name: name, gender: gender, class: className, house: house });
-        students = Database.getStudents();
-        document.getElementById('newStudentName').value = '';
-        refreshAllTables();
-        showToast('Student ' + name + ' added! ✅');
-    }
-
-    async function deleteStudent(id) {
-        if (confirm('Delete this student?')) {
-            await Database.deleteStudent(id);
-            students = Database.getStudents();
-            refreshAllTables();
-            showToast('Student deleted.');
+        // ==================== SAVE FUNCTION - MUST BE CALLED AFTER EVERY CHANGE ====================
+        function saveData() {
+            localStorage.setItem('admin_students', JSON.stringify(students));
+            localStorage.setItem('admin_teachers', JSON.stringify(teachers));
         }
-    }
 
-    function loadStudentTable() {
-        var tbody = document.getElementById('studentTableBody');
-        if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#999;">No students yet.</td></tr>';
-            return;
-        }
-        var html = '';
-        students.forEach(function(s) {
-            html += '<tr><td><strong>' + s.id + '</strong></td><td>' + s.name + '</td><td>' + s.gender + '</td><td>' + s.class + '</td><td>' + (s.house || 'N/A') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteStudent(\'' + s.id + '\')">🗑 Delete</button></td></tr>';
-        });
-        tbody.innerHTML = html;
-    }
-
-    // ==================== TEACHERS ====================
-    async function addTeacher() {
-        var title = document.getElementById('newTeacherTitle').value;
-        var name = document.getElementById('newTeacherName').value.trim();
-        var password = document.getElementById('newTeacherPassword').value || '1234';
-
-        if (!name) { showToast('Please enter teacher name!', 'error'); return; }
-
-        await Database.addTeacher({ title: title, name: name, password: password });
-        teachers = Database.getTeachers();
-        document.getElementById('newTeacherName').value = '';
-        loadTeacherTable();
-        showToast('Teacher ' + title + ' ' + name + ' added! ✅');
-    }
-
-    async function deleteTeacher(index) {
-        if (confirm('Delete this teacher?')) {
-            await Database.deleteTeacher(index);
-            teachers = Database.getTeachers();
+        // ==================== INITIALIZATION ====================
+        window.onload = function() {
+            initData(); // Load saved data first
+            generateStudentID();
+            loadStudentTable();
             loadTeacherTable();
-            showToast('Teacher deleted.');
+            loadClassSummary();
+            loadSummary();
+            // Load branding settings
+            var logo = localStorage.getItem('school_logo');
+            var name = localStorage.getItem('school_name');
+            var motto = localStorage.getItem('school_motto');
+            if (name) document.getElementById('schoolNameInput').value = name;
+            if (motto) document.getElementById('schoolMottoInput').value = motto;
+        };
+
+        // ==================== TABS ====================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+            event.target.classList.add('active');
+            document.getElementById('panel-' + tabName).classList.add('active');
+            if (tabName === 'summary') loadSummary();
+            if (tabName === 'classes') loadClassSummary();
+            if (tabName === 'settings') {
+                var name = localStorage.getItem('school_name');
+                var motto = localStorage.getItem('school_motto');
+                if (name) document.getElementById('schoolNameInput').value = name;
+                if (motto) document.getElementById('schoolMottoInput').value = motto;
+            }
         }
-    }
 
-    function loadTeacherTable() {
-        var tbody = document.getElementById('teacherTableBody');
-        var html = '';
-        teachers.forEach(function(t, index) {
-            html += '<tr><td>' + (index + 1) + '</td><td>' + t.title + ' ' + t.name + '</td><td>' + (t.password || '1234') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteTeacher(' + index + ')">🗑 Delete</button></td></tr>';
-        });
-        tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:#999;">No teachers yet.</td></tr>';
-    }
+        // ==================== STUDENTS ====================
+        function generateStudentID() {
+            document.getElementById('newStudentID').value = 'STU' + String(students.length + 1).padStart(4, '0');
+        }
 
-    // ==================== CLASS SUMMARY ====================
-    function loadClassSummary() {
-        var tbody = document.getElementById('classSummaryBody');
-        var html = '';
-        classLevels.forEach(function(cls) {
-            var count = students.filter(function(s) { return s.class === cls; }).length;
-            html += '<tr><td><strong>' + cls + '</strong></td><td>' + count + ' student(s)</td></tr>';
-        });
-        tbody.innerHTML = html;
-    }
+        function addStudent() {
+            var id = document.getElementById('newStudentID').value;
+            var name = document.getElementById('newStudentName').value.trim();
+            var gender = document.getElementById('newStudentGender').value;
+            var className = document.getElementById('newStudentClass').value;
+            var house = document.getElementById('newStudentHouse').value;
+            if (!name) { showToast('Please enter student name!', 'error'); return; }
+            if (!className) { showToast('Please select a class!', 'error'); return; }
+            students.push({ id: id, name: name, gender: gender, class: className, house: house });
+            saveData(); // ✅ SAVE IMMEDIATELY
+            document.getElementById('newStudentName').value = '';
+            generateStudentID();
+            loadStudentTable();
+            loadClassSummary();
+            showToast('Student ' + name + ' added! ✅');
+        }
 
-    // ==================== SUMMARY ====================
-    function loadSummary() {
-        document.getElementById('totalStudents').textContent = students.length;
-        document.getElementById('totalTeachers').textContent = teachers.length;
-    }
+        function deleteStudent(id) {
+            if (confirm('Delete this student? This cannot be undone.')) {
+                students = students.filter(function(s) { return s.id !== id; });
+                saveData(); // ✅ SAVE IMMEDIATELY
+                loadStudentTable();
+                loadClassSummary();
+                generateStudentID();
+                showToast('Student deleted.');
+            }
+        }
 
-    function showToast(message, type) {
-        var toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.style.display = 'block';
-        toast.style.background = type === 'error' ? '#dc3545' : '#28a745';
-        setTimeout(function() { toast.style.display = 'none'; }, 3000);
-    }
-</script>
+        function loadStudentTable() {
+            var tbody = document.getElementById('studentTableBody');
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#999;">No students yet. Add one above.</td></tr>';
+                return;
+            }
+            var html = '';
+            students.forEach(function(s) {
+                html += '<tr><td><strong>' + s.id + '</strong></td><td>' + s.name + '</td><td>' + s.gender + '</td><td>' + s.class + '</td><td>' + (s.house || 'N/A') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteStudent(\'' + s.id + '\')">🗑 Delete</button></td></tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ==================== TEACHERS ====================
+        function addTeacher() {
+            var title = document.getElementById('newTeacherTitle').value;
+            var name = document.getElementById('newTeacherName').value.trim();
+            var password = document.getElementById('newTeacherPassword').value || '1234';
+            if (!name) { showToast('Please enter teacher name!', 'error'); return; }
+            teachers.push({ title: title, name: name, password: password });
+            saveData(); // ✅ SAVE IMMEDIATELY
+            document.getElementById('newTeacherName').value = '';
+            document.getElementById('newTeacherPassword').value = '1234';
+            loadTeacherTable();
+            showToast('Teacher ' + title + ' ' + name + ' added! ✅');
+        }
+
+        function deleteTeacher(index) {
+            if (confirm('Delete this teacher?')) {
+                teachers.splice(index, 1);
+                saveData(); // ✅ SAVE IMMEDIATELY
+                loadTeacherTable();
+                showToast('Teacher deleted.');
+            }
+        }
+
+        function loadTeacherTable() {
+            var tbody = document.getElementById('teacherTableBody');
+            var html = '';
+            teachers.forEach(function(t, index) {
+                html += '<tr><td>' + (index + 1) + '</td><td>' + t.title + ' ' + t.name + '</td><td>' + (t.password || '1234') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteTeacher(' + index + ')">🗑 Delete</button></td></tr>';
+            });
+            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:#999;">No teachers yet.</td></tr>';
+        }
+
+        // ==================== CLASS SUMMARY ====================
+        function loadClassSummary() {
+            var tbody = document.getElementById('classSummaryBody');
+            var html = '';
+            classLevels.forEach(function(cls) {
+                var count = students.filter(function(s) { return s.class === cls; }).length;
+                html += '<tr><td><strong>' + cls + '</strong></td><td>' + count + ' student(s)</td></tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ==================== SUMMARY ====================
+        function loadSummary() {
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalTeachers').textContent = teachers.length;
+        }
+
+        // ==================== BACKUP ====================
+        function backupData() {
+            var backup = {
+                version: '1.0',
+                date: new Date().toISOString(),
+                students: students,
+                teachers: teachers,
+                scores: {},
+                personality: {},
+                settings: {}
+            };
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key.startsWith('score_')) backup.scores[key] = JSON.parse(localStorage.getItem(key));
+                if (key.startsWith('personality_')) backup.personality[key] = JSON.parse(localStorage.getItem(key));
+                if (key.startsWith('settings_')) backup.settings[key] = JSON.parse(localStorage.getItem(key));
+            }
+            var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a'); a.href = url; a.download = 'school_backup_' + new Date().toISOString().slice(0,10) + '.json';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            showToast('✅ Backup downloaded!');
+        }
+
+        function restoreData(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            if (!confirm('⚠️ This will overwrite ALL current data. Continue?')) { event.target.value = ''; return; }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+                    if (data.students) { students = data.students; localStorage.setItem('admin_students', JSON.stringify(students)); }
+                    if (data.teachers) { teachers = data.teachers; localStorage.setItem('admin_teachers', JSON.stringify(teachers)); }
+                    if (data.scores) { Object.keys(data.scores).forEach(function(k) { localStorage.setItem(k, JSON.stringify(data.scores[k])); }); }
+                    if (data.personality) { Object.keys(data.personality).forEach(function(k) { localStorage.setItem(k, JSON.stringify(data.personality[k])); }); }
+                    if (data.settings) { Object.keys(data.settings).forEach(function(k) { localStorage.setItem(k, JSON.stringify(data.settings[k])); }); }
+                    alert('✅ Data restored! Page will reload.');
+                    location.reload();
+                } catch(err) { alert('❌ Invalid backup file!'); }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ==================== SETTINGS ====================
+        function uploadLogo(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) { localStorage.setItem('school_logo', e.target.result); showToast('✅ Logo uploaded!'); };
+            reader.readAsDataURL(file);
+        }
+
+        function saveSettings() {
+            var name = document.getElementById('schoolNameInput').value;
+            var motto = document.getElementById('schoolMottoInput').value;
+            if (name) localStorage.setItem('school_name', name);
+            if (motto) localStorage.setItem('school_motto', motto);
+            showToast('✅ Branding saved!');
+        }
+
+        function showToast(message, type) {
+            var t = document.getElementById('toast');
+            t.textContent = message;
+            t.style.display = 'block';
+            t.style.background = type === 'error' ? '#dc3545' : '#28a745';
+            setTimeout(function() { t.style.display = 'none'; }, 3000);
+        }
+    </script>
 </body>
 </html>
