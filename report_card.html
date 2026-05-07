@@ -3,189 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Card | EduReport Pro</title>
-    
-    <!-- PDF Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
+    <title>Report Card | School Report Portal</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #e8ecf1; min-height: 100vh; padding: 20px; }
 
-        body {
-            background: #e8ecf1;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .action-bar {
-            max-width: 800px;
-            margin: 0 auto 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
+        /* Action Bar */
+        .action-bar { max-width: 800px; margin: 0 auto 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block; }
         .btn-primary { background: #1e3c72; color: white; }
         .btn-success { background: #28a745; color: white; }
-        .btn-info { background: #1565c0; color: white; }
-        .btn-warning { background: #ff8f00; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
+        /* Report Card */
+        .report-card { max-width: 800px; margin: 0 auto; background: white; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); overflow: hidden; }
 
-        .report-card {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            overflow: hidden;
-        }
+        /* Header */
+        .report-header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 25px 30px; text-align: center; }
+        .report-header .badge { width: 70px; height: 70px; background: white; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #1e3c72; font-weight: bold; overflow: hidden; }
+        .report-header .badge img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .report-header h1 { font-size: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .report-header .subtitle { font-size: 13px; opacity: 0.9; }
+        .report-header .school-contact { font-size: 11px; opacity: 0.8; margin-top: 6px; }
 
-        .report-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 25px 30px;
-            text-align: center;
-        }
+        /* Student Info Strip */
+        .student-strip { background: #f8fafc; padding: 15px 30px; border-bottom: 2px solid #e0e0e0; display: flex; flex-wrap: wrap; justify-content: space-between; font-size: 13px; }
+        .student-strip .info-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .student-strip .info-item { color: #555; }
+        .student-strip .info-item strong { color: #1e3c72; }
 
-        .report-header .badge {
-            width: 70px;
-            height: 70px;
-            background: white;
-            border-radius: 50%;
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+        /* Body */
+        .report-body { padding: 25px 30px; }
+        .section-title { font-size: 15px; font-weight: 700; color: #1e3c72; margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #1e3c72; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .report-header .badge img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .report-header h1 {
-            font-size: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
-
-        .report-header .subtitle {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-
-        .report-header .school-contact {
-            font-size: 11px;
-            opacity: 0.8;
-            margin-top: 6px;
-        }
-
-        .student-strip {
-            background: #f8fafc;
-            padding: 15px 30px;
-            border-bottom: 2px solid #e0e0e0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .student-strip .info-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .student-strip .info-item {
-            color: #555;
-        }
-
-        .student-strip .info-item strong {
-            color: #1e3c72;
-        }
-
-        .report-body {
-            padding: 25px 30px;
-        }
-
-        .section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #1e3c72;
-            margin: 20px 0 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #1e3c72;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .subjects-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .subjects-table th {
-            background: #1e3c72;
-            color: white;
-            padding: 10px 8px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-
-        .subjects-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-        }
-
-        .subjects-table tr:hover td {
-            background: #f8fafc;
-        }
-
-        .subjects-table .subject-name {
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .grade-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 12px;
-        }
-
+        /* Subjects Table */
+        .subjects-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .subjects-table th { background: #1e3c72; color: white; padding: 10px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+        .subjects-table td { padding: 10px 8px; border-bottom: 1px solid #eee; text-align: center; }
+        .subjects-table tr:hover td { background: #f8fafc; }
+        .subjects-table .subject-name { text-align: left; font-weight: 600; color: #333; }
+        .grade-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; }
         .grade-A { background: #d4edda; color: #155724; }
         .grade-B { background: #cce5ff; color: #004085; }
         .grade-C { background: #fff3cd; color: #856404; }
@@ -193,102 +51,37 @@
         .grade-E { background: #f8d7da; color: #721c24; }
         .grade-F { background: #f5c6cb; color: #721c24; }
 
-        .summary-box {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 25px 0;
-        }
+        /* Summary Box */
+        .summary-box { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 25px 0; }
+        .summary-box .big-score { font-size: 42px; font-weight: 700; line-height: 1; }
+        .summary-box .summary-label { font-size: 14px; opacity: 0.9; margin-top: 5px; }
+        .ranking-divider { border-top: 1px solid rgba(255,255,255,0.3); margin: 15px 0; padding-top: 15px; }
+        .ranking-position { font-size: 28px; font-weight: 700; }
+        .ranking-detail { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+        .top5-table { width: 100%; color: white; font-size: 13px; margin-top: 15px; text-align: left; border-collapse: collapse; }
+        .top5-table th { padding: 6px 8px; font-size: 10px; text-transform: uppercase; opacity: 0.8; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .top5-table td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .top5-table .highlight-row { background: rgba(255,255,255,0.15); font-weight: 600; border-radius: 4px; }
 
-        .summary-box .big-score {
-            font-size: 42px;
-            font-weight: 700;
-            line-height: 1;
-        }
+        /* Personality Grid */
+        .personality-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .personality-item { background: #f8fafc; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .personality-item .trait-name { font-weight: 500; color: #444; }
 
-        .summary-box .summary-label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
+        /* Attendance */
+        .attendance-row { display: flex; gap: 30px; flex-wrap: wrap; font-size: 14px; padding: 12px; background: #f8fafc; border-radius: 8px; margin: 15px 0; }
+        .remarks-section { margin: 20px 0; }
+        .remarks-box { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; font-size: 14px; line-height: 1.6; min-height: 60px; color: #444; }
+        .remarks-box strong { color: #1e3c72; }
 
-        .personality-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-        }
+        /* Signatures */
+        .signature-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 30px; text-align: center; }
+        .signature-line { border-top: 1px solid #333; padding-top: 8px; font-size: 12px; color: #555; }
 
-        .personality-item {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
+        /* Footer */
+        .report-footer { background: #f0f0f0; padding: 15px 30px; text-align: center; font-size: 11px; color: #888; border-top: 1px solid #ddd; }
 
-        .personality-item .trait-name {
-            font-weight: 500;
-            color: #444;
-        }
-
-        .attendance-row {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            font-size: 14px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-
-        .remarks-section {
-            margin: 20px 0;
-        }
-
-        .remarks-box {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-            min-height: 60px;
-            color: #444;
-        }
-
-        .remarks-box strong {
-            color: #1e3c72;
-        }
-
-        .signature-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .signature-line {
-            border-top: 1px solid #333;
-            padding-top: 8px;
-            font-size: 12px;
-            color: #555;
-        }
-
-        .report-footer {
-            background: #f0f0f0;
-            padding: 15px 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #888;
-            border-top: 1px solid #ddd;
-        }
-
+        /* Print */
         @media print {
             body { background: white; padding: 0; }
             .action-bar { display: none !important; }
@@ -296,8 +89,8 @@
             .report-header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .subjects-table th { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .summary-box { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .grade-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
-
         @media (max-width: 600px) {
             .report-header h1 { font-size: 16px; }
             .student-strip { font-size: 11px; padding: 10px 15px; }
@@ -305,26 +98,22 @@
             .subjects-table { font-size: 11px; }
             .subjects-table th, .subjects-table td { padding: 6px 4px; }
             .signature-section { grid-template-columns: 1fr; }
-            .personality-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
-    <script src="database.js"></script>
 </head>
 <body>
 
     <!-- Action Buttons -->
     <div class="action-bar">
         <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
-        <button class="btn btn-success" onclick="downloadPDF()">📥 Download PDF</button>
-        <button class="btn btn-info" onclick="shareViaWhatsApp()">📱 Share via WhatsApp</button>
-        <button class="btn btn-warning" onclick="window.location.href='score_entry.html'">📝 Edit Scores</button>
+        <button class="btn btn-success" onclick="window.location.href='score_entry.html'">📝 Edit Scores</button>
         <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">🔙 Dashboard</button>
     </div>
 
     <!-- Report Card -->
     <div class="report-card" id="reportCard">
         
-        <!-- Header -->
+       <!-- Header -->
         <div class="report-header">
             <div class="badge">
                 <img src="school_logo.png" alt="School Logo">
@@ -355,36 +144,41 @@
             
             <!-- Academic Performance -->
             <div class="section-title">📖 Academic Performance</div>
-            <table class="subjects-table">
-                <thead>
-                    <tr>
-                        <th style="text-align:left;">Subject</th>
-                        <th>Class (50%)</th>
-                        <th>Exam (50%)</th>
-                        <th>Total</th>
-                        <th>Grade</th>
-                        <th>Interpretation</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody id="subjectsTableBody">
-                    <tr><td colspan="7" style="text-align:center; padding:20px;">Loading scores...</td></tr>
-                </tbody>
-            </table>
-           
-            <!-- Overall Summary -->
-<div class="summary-box">
-    <div class="big-score" id="overallAverage">-</div>
-    <div class="summary-label">OVERALL AVERAGE</div>
-    <div style="margin-top:10px; font-size:16px;" id="overallGradeDisplay"></div>
-    
-    <!-- CLASS RANKING SECTION -->
-    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3);">
-        <div style="font-size: 14px; opacity: 0.9;">CLASS RANKING</div>
-        <div style="font-size: 28px; font-weight: 700; margin: 5px 0;" id="classRankDisplay">-</div>
-        <div style="font-size: 13px; opacity: 0.8;" id="classRankDetail">-</div>
-    </div>
-</div>
+            <div style="overflow-x: auto;">
+                <table class="subjects-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Subject</th>
+                            <th>Class (50%)</th>
+                            <th>Exam (50%)</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>Interpretation</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subjectsTableBody">
+                        <tr><td colspan="7" style="text-align:center; padding:20px;">Loading scores...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Overall Summary with Class Ranking -->
+            <div class="summary-box">
+                <div class="big-score" id="overallAverage">-</div>
+                <div class="summary-label">OVERALL AVERAGE</div>
+                <div style="margin-top:10px; font-size:16px;" id="overallGradeDisplay"></div>
+                
+                <!-- Class Ranking -->
+                <div class="ranking-divider">
+                    <div style="font-size:13px; opacity:0.85;">CLASS RANKING</div>
+                    <div class="ranking-position" id="classRankPosition">-</div>
+                    <div class="ranking-detail" id="classRankDetail"></div>
+                </div>
+
+                <!-- Top 5 Rankings Table -->
+                <div id="top5Container" style="margin-top:15px;"></div>
+            </div>
 
             <!-- Personality Development -->
             <div class="section-title">🌟 Personality Development</div>
@@ -397,7 +191,6 @@
                 <div><strong>Out Of:</strong> <span id="rptOutOf">-</span></div>
                 <div><strong>Promoted To:</strong> <span id="rptPromoted">-</span></div>
                 <div><strong>Next Term Begins:</strong> <span id="rptNextTerm">-</span></div>
-                <div><strong>📅 Vacation Date:</strong> <span id="rptVacationDate">-</span></div>
             </div>
 
             <!-- Conduct & Interest -->
@@ -430,28 +223,27 @@
 
         <!-- Footer -->
         <div class="report-footer">
-            © 2025 iTech Systems Solutions | EduReport Pro | Generated on <span id="rptDate"></span>
+            © <span id="rptYearFooter">2025</span> School Report Portal | Generated on <span id="rptDate"></span>
         </div>
+
     </div>
 
     <script>
         // ==================== DATA ====================
-        const subjectsByCategory = {
+        var subjectsByCategory = {
             'KG': ['Literacy', 'Numeracy', 'Creative Art', 'Religious and Moral Education', 'Phonics'],
             'LowerPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Religious and Moral Education', 'French', 'Creative Art', 'Phonics'],
             'UpperPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Creative Art', 'Religious and Moral Education', 'Computing', 'Ghanaian Language', 'French'],
             'JHS': ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious and Moral Education', 'Career Technology', 'Computing', 'Ghanaian Language', 'Creative Art', 'French']
         };
 
-        const personalityTraits = [
+        var personalityTraits = [
             'Leadership Ability', 'Basic Life Skills', 'Neatness', 'Sociability',
             'Creativity and Initiative', 'Dependability', 'Recreation', 'Work Habits'
         ];
 
-        const classLevels = ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'];
-
-        let student = null;
-        let category = '';
+        var student = null;
+        var category = '';
 
         // ==================== INITIALIZATION ====================
         window.onload = function() {
@@ -459,147 +251,238 @@
             category = sessionStorage.getItem('category');
 
             if (!student) {
-                alert('No student selected! Returning to dashboard.');
+                alert('No student selected!');
                 window.location.href = 'dashboard.html';
                 return;
             }
 
-            document.getElementById('rptName').textContent = student.name || '-';
-            document.getElementById('rptID').textContent = student.id || '-';
-            document.getElementById('rptClass').textContent = student.class || '-';
+            // Load school branding
+            loadSchoolBranding();
+
+            // Fill student info
+            document.getElementById('rptName').textContent = student.name;
+            document.getElementById('rptID').textContent = student.id;
+            document.getElementById('rptClass').textContent = student.class;
             document.getElementById('rptHouse').textContent = student.house || 'N/A';
-            document.getElementById('rptTerm').textContent = sessionStorage.getItem('term') || '-';
-            document.getElementById('rptYear').textContent = sessionStorage.getItem('academicYear') || '-';
+            document.getElementById('rptTerm').textContent = sessionStorage.getItem('term');
+            document.getElementById('rptYear').textContent = sessionStorage.getItem('academicYear');
+            document.getElementById('rptYearFooter').textContent = sessionStorage.getItem('academicYear') || '2025';
             document.getElementById('rptDate').textContent = new Date().toLocaleDateString();
 
+            // Load data
             loadSavedSettings();
             loadScores();
             loadPersonality();
         };
 
+        // ==================== SCHOOL BRANDING ====================
+        function loadSchoolBranding() {
+            var logo = localStorage.getItem('school_logo');
+            var schoolName = localStorage.getItem('school_name');
+            
+            if (logo) {
+                document.getElementById('schoolBadge').innerHTML = '<img src="' + logo + '" alt="Logo">';
+            }
+            if (schoolName) {
+                document.getElementById('schoolNameDisplay').textContent = schoolName.toUpperCase();
+            }
+        }
+
         // ==================== LOAD SCORES ====================
         function loadScores() {
-            const subjects = subjectsByCategory[category] || [];
-            const tbody = document.getElementById('subjectsTableBody');
-            let totalSum = 0;
-            let count = 0;
-            let html = '';
+            var subjects = subjectsByCategory[category] || [];
+            var tbody = document.getElementById('subjectsTableBody');
+            var totalSum = 0;
+            var count = 0;
+            var html = '';
 
-            subjects.forEach(subject => {
-                const subjectId = subject.replace(/\s+/g, '_');
-                const key = 'score_' + student.id + '_' + subjectId;
-                const saved = localStorage.getItem(key);
+            subjects.forEach(function(subject) {
+                var subjectId = subject.replace(/\s+/g, '_');
+                var key = 'score_' + student.id + '_' + subjectId;
+                var saved = localStorage.getItem(key);
 
-                let classScore = 0, examScore = 0, total = 0, grade = '-', interpretation = '-', remarks = '-';
+                var classScore = 0, examScore = 0, total = 0, grade = '-', interpretation = '-', remarks = '-';
 
                 if (saved) {
-                    try {
-                        const data = JSON.parse(saved);
-                        classScore = data.classScore || 0;
-                        examScore = data.examScore || 0;
-                        total = data.total || 0;
-                        grade = data.grade || '-';
-                    } catch(e) {}
+                    var data = JSON.parse(saved);
+                    classScore = data.classScore || 0;
+                    examScore = data.examScore || 0;
+                    total = data.total || 0;
+                    grade = data.grade || '-';
+                    interpretation = getInterpretation(grade);
+                    remarks = getRemarks(total);
+
+                    if (total > 0) { totalSum += total; count++; }
                 }
 
-                interpretation = getInterpretation(grade);
-                remarks = getRemarks(total);
-
-                if (total > 0) { totalSum += total; count++; }
-
-                const gradeClass = grade !== '-' ? 'grade-' + grade : '';
-
-                html += '<tr>' +
-                    '<td class="subject-name">📖 ' + subject + '</td>' +
-                    '<td>' + (classScore > 0 ? classScore : '-') + '</td>' +
-                    '<td>' + (examScore > 0 ? examScore : '-') + '</td>' +
-                    '<td><strong>' + (total > 0 ? total.toFixed(1) : '-') + '</strong></td>' +
-                    '<td><span class="grade-badge ' + gradeClass + '">' + grade + '</span></td>' +
-                    '<td style="font-size:12px;">' + interpretation + '</td>' +
-                    '<td style="font-size:11px;">' + remarks + '</td>' +
-                    '</tr>';
+                html += '<tr>';
+                html += '<td class="subject-name">📖 ' + subject + '</td>';
+                html += '<td>' + (classScore > 0 ? classScore : '-') + '</td>';
+                html += '<td>' + (examScore > 0 ? examScore : '-') + '</td>';
+                html += '<td><strong>' + (total > 0 ? total.toFixed(1) : '-') + '</strong></td>';
+                html += '<td><span class="grade-badge grade-' + grade + '">' + grade + '</span></td>';
+                html += '<td style="font-size:12px;">' + interpretation + '</td>';
+                html += '<td style="font-size:11px;">' + remarks + '</td>';
+                html += '</tr>';
             });
 
             tbody.innerHTML = html;
 
-            const average = count > 0 ? totalSum / count : 0;
-            const overallGrade = getGrade(average);
-            const overallGradeClass = 'grade-' + overallGrade;
+            // Overall average
+            var average = count > 0 ? totalSum / count : 0;
+            var overallGrade = getGrade(average);
 
             document.getElementById('overallAverage').textContent = average > 0 ? average.toFixed(1) + '%' : '-';
-            document.getElementById('overallGradeDisplay').innerHTML = 
-                average > 0 ? '<span class="grade-badge ' + overallGradeClass + '" style="font-size:16px; padding:6px 16px;">Grade ' + overallGrade + ' - ' + getInterpretation(overallGrade) + '</span>' : '';
-        }
-        // After calculating and displaying overall average:
-calculateClassRank();
+            document.getElementById('overallGradeDisplay').innerHTML = average > 0 ?
+                '<span class="grade-badge grade-' + overallGrade + '" style="font-size:16px; padding:6px 16px;">Grade ' + overallGrade + ' - ' + getInterpretation(overallGrade) + '</span>' : '';
 
-// Add top 5 table
-var rankingsTable = generateClassRankingsTable();
-if (rankingsTable) {
-    document.querySelector('.summary-box').innerHTML += rankingsTable;
-}
-        
+            // Calculate class ranking
+            if (average > 0) {
+                calculateClassRanking(average);
+            }
+        }
+
+        // ==================== CLASS RANKING ====================
+        function calculateClassRanking(currentStudentAverage) {
+            var currentClass = student.class;
+            var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
+            var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
+
+            var rankings = [];
+
+            classStudents.forEach(function(s) {
+                var scores = getStudentScores(s.id);
+                var avg = calculateAverage(scores);
+                if (avg > 0) {
+                    rankings.push({ id: s.id, name: s.name, average: avg, grade: getGrade(avg) });
+                }
+            });
+
+            // Sort highest first
+            rankings.sort(function(a, b) { return b.average - a.average; });
+
+            // Find current student position
+            var position = -1;
+            for (var i = 0; i < rankings.length; i++) {
+                if (rankings[i].id === student.id) { position = i + 1; break; }
+            }
+
+            var totalStudents = rankings.length;
+
+            // Display ranking
+            if (position > 0) {
+                var posText = getPositionSuffix(position);
+                var medal = '';
+                if (position === 1) medal = '🥇 ';
+                else if (position === 2) medal = '🥈 ';
+                else if (position === 3) medal = '🥉 ';
+
+                document.getElementById('classRankPosition').innerHTML = medal + posText + ' <span style="font-size:16px;">out of ' + totalStudents + '</span>';
+                document.getElementById('classRankDetail').textContent = 'Top performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
+            } else {
+                document.getElementById('classRankPosition').textContent = 'Not ranked';
+                document.getElementById('classRankDetail').textContent = 'Enter scores to see ranking';
+            }
+
+            // Build top 5 table
+            buildTop5Table(rankings);
+        }
+
+        function buildTop5Table(rankings) {
+            var top5 = rankings.slice(0, 5);
+            if (top5.length === 0) return;
+
+            var html = '<table class="top5-table"><thead><tr><th>#</th><th>Name</th><th>Avg</th><th>Grade</th></tr></thead><tbody>';
+
+            top5.forEach(function(r, index) {
+                var medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+
+                var isCurrent = (r.id === student.id);
+                var rowClass = isCurrent ? 'highlight-row' : '';
+
+                html += '<tr class="' + rowClass + '">';
+                html += '<td>' + medal + ' ' + (index + 1) + '</td>';
+                html += '<td>' + r.name + (isCurrent ? ' ⭐' : '') + '</td>';
+                html += '<td>' + r.average.toFixed(1) + '%</td>';
+                html += '<td>' + r.grade + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('top5Container').innerHTML = html;
+        }
 
         // ==================== LOAD PERSONALITY ====================
         function loadPersonality() {
-            const grid = document.getElementById('personalityGrid');
-            const sampleGrades = ['A', 'A', 'B', 'B', 'B', 'C'];
-            let html = '';
+            var grid = document.getElementById('personalityGrid');
+            var html = '';
 
-            personalityTraits.forEach(trait => {
-                const savedKey = 'personality_' + student.id + '_' + trait.replace(/\s+/g, '_');
-                const saved = localStorage.getItem(savedKey);
-                let grade = '-';
+            personalityTraits.forEach(function(trait) {
+                var savedKey = 'personality_' + student.id + '_' + trait.replace(/\s+/g, '_');
+                var saved = localStorage.getItem(savedKey);
+                var grade = '-';
 
                 if (saved) {
-                    try { const data = JSON.parse(saved); grade = data.grade || '-'; } catch(e) {}
+                    var data = JSON.parse(saved);
+                    grade = data.grade || '-';
                 }
-                if (grade === '-') { grade = sampleGrades[Math.floor(Math.random() * sampleGrades.length)]; }
 
-                const gradeClass = 'grade-' + grade;
-                html += '<div class="personality-item">' +
-                    '<span class="trait-name">' + trait + '</span>' +
-                    '<span class="grade-badge ' + gradeClass + '">' + grade + '</span>' +
-                    '</div>';
+                if (grade === '-') {
+                    var sampleGrades = ['A', 'A', 'B', 'B', 'B', 'C'];
+                    grade = sampleGrades[Math.floor(Math.random() * sampleGrades.length)];
+                }
+
+                html += '<div class="personality-item">';
+                html += '<span class="trait-name">' + trait + '</span>';
+                html += '<span class="grade-badge grade-' + grade + '">' + grade + '</span>';
+                html += '</div>';
             });
 
             grid.innerHTML = html;
         }
 
-        // ==================== LOAD SAVED SETTINGS ====================
+        // ==================== LOAD SETTINGS ====================
         function loadSavedSettings() {
-            const settingsKey = 'settings_' + student.id;
-            const savedSettings = localStorage.getItem(settingsKey);
+            var settingsKey = 'settings_' + student.id;
+            var savedSettings = localStorage.getItem(settingsKey);
 
             if (savedSettings) {
-                try {
-                    const data = JSON.parse(savedSettings);
-                    document.getElementById('rptAttendance').textContent = data.daysPresent || '-';
-                    document.getElementById('rptOutOf').textContent = data.totalDays || '-';
-                    document.getElementById('rptPromoted').textContent = data.promotedTo || getNextClass(student.class);
-                    document.getElementById('rptNextTerm').textContent = data.nextTermBegins || '-';
-                    document.getElementById('rptVacationDate').textContent = data.vacationDate || '-';
-                    document.getElementById('rptConduct').textContent = data.conduct || '-';
-                    document.getElementById('rptInterest').textContent = data.interest || '-';
-                    document.getElementById('rptTeacherRemarks').textContent = data.teacherRemarks || '-';
-                    document.getElementById('rptHeadRemarks').textContent = data.headRemarks || '-';
-                } catch(e) { setDefaults(); }
-            } else { setDefaults(); }
-        }
-
-        function setDefaults() {
-            document.getElementById('rptAttendance').textContent = '-';
-            document.getElementById('rptOutOf').textContent = '-';
-            document.getElementById('rptPromoted').textContent = getNextClass(student.class);
-            document.getElementById('rptNextTerm').textContent = '-';
-            document.getElementById('rptVacationDate').textContent = '-';
-            document.getElementById('rptConduct').textContent = '-';
-            document.getElementById('rptInterest').textContent = '-';
-            document.getElementById('rptTeacherRemarks').textContent = '-';
-            document.getElementById('rptHeadRemarks').textContent = '-';
+                var data = JSON.parse(savedSettings);
+                document.getElementById('rptAttendance').textContent = data.daysPresent || '-';
+                document.getElementById('rptOutOf').textContent = data.totalDays || '-';
+                document.getElementById('rptPromoted').textContent = data.promotedTo || '-';
+                document.getElementById('rptNextTerm').textContent = data.nextTermBegins || '-';
+                document.getElementById('rptConduct').textContent = data.conduct || '-';
+                document.getElementById('rptInterest').textContent = data.interest || '-';
+                document.getElementById('rptTeacherRemarks').textContent = data.teacherRemarks || '-';
+                document.getElementById('rptHeadRemarks').textContent = data.headRemarks || '-';
+            }
         }
 
         // ==================== HELPERS ====================
+        function getStudentScores(studentId) {
+            var scores = [];
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key.indexOf('score_' + studentId + '_') === 0) {
+                    try {
+                        var data = JSON.parse(localStorage.getItem(key));
+                        if (data && data.total > 0) scores.push(data.total);
+                    } catch (e) {}
+                }
+            }
+            return scores;
+        }
+
+        function calculateAverage(scores) {
+            if (scores.length === 0) return 0;
+            var sum = scores.reduce(function(a, b) { return a + b; }, 0);
+            return sum / scores.length;
+        }
+
         function getGrade(score) {
             if (score >= 80) return 'A';
             if (score >= 70) return 'B';
@@ -610,8 +493,8 @@ if (rankingsTable) {
         }
 
         function getInterpretation(grade) {
-            const interpretations = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
-            return interpretations[grade] || '';
+            var map = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
+            return map[grade] || '';
         }
 
         function getRemarks(score) {
@@ -623,178 +506,12 @@ if (rankingsTable) {
             return 'See Teacher';
         }
 
-        function getNextClass(currentClass) {
-            const index = classLevels.indexOf(currentClass);
-            if (index === -1 || index >= classLevels.length - 1) return 'Graduated';
-            return classLevels[index + 1];
+        function getPositionSuffix(pos) {
+            if (pos === 1) return '1st';
+            if (pos === 2) return '2nd';
+            if (pos === 3) return '3rd';
+            return pos + 'th';
         }
-
-        // ==================== PDF DOWNLOAD ====================
-        function downloadPDF() {
-            const element = document.getElementById('reportCard');
-            const studentName = document.getElementById('rptName').textContent || 'Student';
-            const opt = {
-                margin: 3,
-                filename: 'Report_Card_' + studentName.replace(/\s+/g, '_') + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-
-        // ==================== WHATSAPP SHARE ====================
-        function shareViaWhatsApp() {
-            const studentName = document.getElementById('rptName').textContent || 'Student';
-            const average = document.getElementById('overallAverage').textContent || '-';
-            const term = document.getElementById('rptTerm').textContent || '-';
-            const className = document.getElementById('rptClass').textContent || '-';
-            const message = '📊 *REPORT CARD*%0A%0A' +
-                'Student: *' + studentName + '*%0A' +
-                'Class: ' + className + '%0A' +
-                'Term: ' + term + '%0A' +
-                'Average: *' + average + '*%0A%0A' +
-                'Full report available at the school portal.';
-            window.open('https://wa.me/?text=' + message, '_blank');
-        }
-        // ==================== CLASS RANKING ====================
-
-function calculateClassRank() {
-    var currentStudentId = student.id;
-    var currentClass = student.class;
-    var currentTerm = sessionStorage.getItem('term');
-    
-    // Get all students in the same class from localStorage
-    var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
-    var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
-    
-    // Calculate averages for all students in the class
-    var rankings = [];
-    
-    classStudents.forEach(function(s) {
-        var studentScores = getStudentScores(s.id);
-        var average = calculateAverage(studentScores);
-        if (average > 0) {
-            rankings.push({
-                id: s.id,
-                name: s.name,
-                average: average
-            });
-        }
-    });
-    
-    // Sort by average (highest first)
-    rankings.sort(function(a, b) { return b.average - a.average; });
-    
-    // Find current student's position
-    var position = -1;
-    for (var i = 0; i < rankings.length; i++) {
-        if (rankings[i].id === currentStudentId) {
-            position = i + 1;
-            break;
-        }
-    }
-    
-    // Display ranking
-    var totalRanked = rankings.length;
-    var rankDisplay = document.getElementById('classRankDisplay');
-    var rankDetail = document.getElementById('classRankDetail');
-    
-    if (position > 0) {
-        rankDisplay.textContent = getPositionWithSuffix(position) + ' out of ' + totalRanked;
-        
-        // Show top 3 specially
-        if (position === 1) {
-            rankDisplay.innerHTML = '🥇 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
-        } else if (position === 2) {
-            rankDisplay.innerHTML = '🥈 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
-        } else if (position === 3) {
-            rankDisplay.innerHTML = '🥉 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
-        }
-        
-        rankDetail.textContent = 'Top performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
-    } else {
-        rankDisplay.textContent = 'Not ranked';
-        rankDetail.textContent = 'Enter scores to see class ranking';
-    }
-}
-
-function getStudentScores(studentId) {
-    var scores = [];
-    // Scan localStorage for scores of this student
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith('score_' + studentId + '_')) {
-            var data = JSON.parse(localStorage.getItem(key));
-            if (data && data.total > 0) {
-                scores.push(data.total);
-            }
-        }
-    }
-    return scores;
-}
-
-function calculateAverage(scores) {
-    if (scores.length === 0) return 0;
-    var sum = scores.reduce(function(a, b) { return a + b; }, 0);
-    return sum / scores.length;
-}
-
-function getPositionWithSuffix(position) {
-    if (position === 1) return '1st';
-    if (position === 2) return '2nd';
-    if (position === 3) return '3rd';
-    return position + 'th';
-}
-
-// ==================== TOP 5 CLASS RANKINGS TABLE ====================
-function generateClassRankingsTable() {
-    var currentClass = student.class;
-    var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
-    var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
-    
-    var rankings = [];
-    classStudents.forEach(function(s) {
-        var scores = getStudentScores(s.id);
-        var average = calculateAverage(scores);
-        if (average > 0) {
-            rankings.push({ id: s.id, name: s.name, average: average });
-        }
-    });
-    
-    rankings.sort(function(a, b) { return b.average - a.average; });
-    
-    // Generate HTML table for top 5
-    var tableHtml = '<div style="margin-top:20px; text-align:left;">';
-    tableHtml += '<h4 style="color:white; margin-bottom:10px;">🏆 ' + currentClass + ' Top Performers</h4>';
-    tableHtml += '<table style="width:100%; color:white; font-size:13px;">';
-    tableHtml += '<thead><tr><th>#</th><th>Name</th><th>Average</th></tr></thead><tbody>';
-    
-    var top5 = rankings.slice(0, 5);
-    top5.forEach(function(r, index) {
-        var medal = '';
-        if (index === 0) medal = '🥇';
-        else if (index === 1) medal = '🥈';
-        else if (index === 2) medal = '🥉';
-        
-        var isCurrentStudent = (r.id === student.id);
-        var rowStyle = isCurrentStudent ? 'background:rgba(255,255,255,0.2); font-weight:bold;' : '';
-        
-        tableHtml += '<tr style="' + rowStyle + '">';
-        tableHtml += '<td>' + medal + ' ' + (index + 1) + '</td>';
-        tableHtml += '<td>' + r.name + (isCurrentStudent ? ' ⭐' : '') + '</td>';
-        tableHtml += '<td>' + r.average.toFixed(1) + '%</td>';
-        tableHtml += '</tr>';
-    });
-    
-    tableHtml += '</tbody></table></div>';
-    
-    return rankings.length > 0 ? tableHtml : '';
-}
-
-// Add to window.onload or report loading function
-// Add this line after the existing summary display:
-// document.querySelector('.summary-box').innerHTML += generateClassRankingsTable();
     </script>
 
 </body>
