@@ -106,42 +106,44 @@
         window.onload = function() { loadTeachers(); };
 
         function login() {
-            var teacher = document.getElementById('teacherSelect').value;
-            var password = document.getElementById('passwordInput').value;
-            var category = document.getElementById('categorySelect').value;
-            var term = document.getElementById('termSelect').value;
-            var year = document.getElementById('yearInput').value;
+    var teacher = document.getElementById('teacherSelect').value;
+    var password = document.getElementById('passwordInput').value;
+    var category = document.getElementById('categorySelect').value;
+    var term = document.getElementById('termSelect').value;
+    var year = document.getElementById('yearInput').value;
 
-            document.getElementById('passwordError').style.display = 'none';
+    document.getElementById('passwordError').style.display = 'none';
 
-            if (!teacher) { alert('Please select your name!'); return; }
-            if (!password) { alert('Please enter your password!'); return; }
-            if (!category) { alert('Please select a category!'); return; }
+    if (!teacher) { alert('Please select your name!'); return; }
+    if (!password) { alert('Please enter your password!'); return; }
+    if (!category) { alert('Please select a category!'); return; }
 
-            // Check password from admin_teachers
-            var savedTeachers = localStorage.getItem('admin_teachers');
-            var teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
-            var foundTeacher = null;
-            for (var i = 0; i < teachers.length; i++) {
-                if ((teachers[i].title + ' ' + teachers[i].name) === teacher) {
-                    foundTeacher = teachers[i];
-                    break;
-                }
-            }
-
-            var validPassword = foundTeacher ? (foundTeacher.password || '1234') : '1234';
-
-            if (password !== validPassword) {
-                document.getElementById('passwordError').style.display = 'block';
-                return;
-            }
-
-            sessionStorage.setItem('teacherName', teacher);
-            sessionStorage.setItem('category', category);
-            sessionStorage.setItem('term', term);
-            sessionStorage.setItem('academicYear', year);
-            window.location.href = 'dashboard.html';
+    // Check password from admin_teachers
+    var savedTeachers = localStorage.getItem('admin_teachers');
+    var teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
+    var foundTeacher = null;
+    for (var i = 0; i < teachers.length; i++) {
+        if ((teachers[i].title + ' ' + teachers[i].name) === teacher) {
+            foundTeacher = teachers[i];
+            break;
         }
+    }
+
+    var validPassword = foundTeacher ? (foundTeacher.password || '1234') : '1234';
+
+    if (password !== validPassword) {
+        document.getElementById('passwordError').style.display = 'block';
+        return;
+    }
+
+    // ✅ CHANGE: Save to LOCAL STORAGE instead of sessionStorage
+    localStorage.setItem('currentTeacherName', teacher);
+    localStorage.setItem('currentCategory', category);
+    localStorage.setItem('currentTerm', term);
+    localStorage.setItem('currentAcademicYear', year);
+
+    window.location.href = 'dashboard.html';
+}
     </script>
 </body>
 </html>
