@@ -648,6 +648,144 @@
                 'Full report available at the school portal.';
             window.open('https://wa.me/?text=' + message, '_blank');
         }
+        // ==================== CLASS RANKING ====================
+
+function calculateClassRank() {
+    var currentStudentId = student.id;
+    var currentClass = student.class;
+    var currentTerm = sessionStorage.getItem('term');
+    
+    // Get all students in the same class from localStorage
+    var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
+    var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
+    
+    // Calculate averages for all students in the class
+    var rankings = [];
+    
+    classStudents.forEach(function(s) {
+        var studentScores = getStudentScores(s.id);
+        var average = calculateAverage(studentScores);
+        if (average > 0) {
+            rankings.push({
+                id: s.id,
+                name: s.name,
+                average: average
+            });
+        }
+    });
+    
+    // Sort by average (highest first)
+    rankings.sort(function(a, b) { return b.average - a.average; });
+    
+    // Find current student's position
+    var position = -1;
+    for (var i = 0; i < rankings.length; i++) {
+        if (rankings[i].id === currentStudentId) {
+            position = i + 1;
+            break;
+        }
+    }
+    
+    // Display ranking
+    var totalRanked = rankings.length;
+    var rankDisplay = document.getElementById('classRankDisplay');
+    var rankDetail = document.getElementById('classRankDetail');
+    
+    if (position > 0) {
+        rankDisplay.textContent = getPositionWithSuffix(position) + ' out of ' + totalRanked;
+        
+        // Show top 3 specially
+        if (position === 1) {
+            rankDisplay.innerHTML = '🥇 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
+        } else if (position === 2) {
+            rankDisplay.innerHTML = '🥈 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
+        } else if (position === 3) {
+            rankDisplay.innerHTML = '🥉 ' + getPositionWithSuffix(position) + ' <span style="font-size:16px;">out of ' + totalRanked + '</span>';
+        }
+        
+        rankDetail.textContent = 'Top performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
+    } else {
+        rankDisplay.textContent = 'Not ranked';
+        rankDetail.textContent = 'Enter scores to see class ranking';
+    }
+}
+
+function getStudentScores(studentId) {
+    var scores = [];
+    // Scan localStorage for scores of this student
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key.startsWith('score_' + studentId + '_')) {
+            var data = JSON.parse(localStorage.getItem(key));
+            if (data && data.total > 0) {
+                scores.push(data.total);
+            }
+        }
+    }
+    return scores;
+}
+
+function calculateAverage(scores) {
+    if (scores.length === 0) return 0;
+    var sum = scores.reduce(function(a, b) { return a + b; }, 0);
+    return sum / scores.length;
+}
+
+function getPositionWithSuffix(position) {
+    if (position === 1) return '1st';
+    if (position === 2) return '2nd';
+    if (position === 3) return '3rd';
+    return position + 'th';
+}
+
+// ==================== TOP 5 CLASS RANKINGS TABLE ====================
+function generateClassRankingsTable() {
+    var currentClass = student.class;
+    var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
+    var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
+    
+    var rankings = [];
+    classStudents.forEach(function(s) {
+        var scores = getStudentScores(s.id);
+        var average = calculateAverage(scores);
+        if (average > 0) {
+            rankings.push({ id: s.id, name: s.name, average: average });
+        }
+    });
+    
+    rankings.sort(function(a, b) { return b.average - a.average; });
+    
+    // Generate HTML table for top 5
+    var tableHtml = '<div style="margin-top:20px; text-align:left;">';
+    tableHtml += '<h4 style="color:white; margin-bottom:10px;">🏆 ' + currentClass + ' Top Performers</h4>';
+    tableHtml += '<table style="width:100%; color:white; font-size:13px;">';
+    tableHtml += '<thead><tr><th>#</th><th>Name</th><th>Average</th></tr></thead><tbody>';
+    
+    var top5 = rankings.slice(0, 5);
+    top5.forEach(function(r, index) {
+        var medal = '';
+        if (index === 0) medal = '🥇';
+        else if (index === 1) medal = '🥈';
+        else if (index === 2) medal = '🥉';
+        
+        var isCurrentStudent = (r.id === student.id);
+        var rowStyle = isCurrentStudent ? 'background:rgba(255,255,255,0.2); font-weight:bold;' : '';
+        
+        tableHtml += '<tr style="' + rowStyle + '">';
+        tableHtml += '<td>' + medal + ' ' + (index + 1) + '</td>';
+        tableHtml += '<td>' + r.name + (isCurrentStudent ? ' ⭐' : '') + '</td>';
+        tableHtml += '<td>' + r.average.toFixed(1) + '%</td>';
+        tableHtml += '</tr>';
+    });
+    
+    tableHtml += '</tbody></table></div>';
+    
+    return rankings.length > 0 ? tableHtml : '';
+}
+
+// Add to window.onload or report loading function
+// Add this line after the existing summary display:
+// document.querySelector('.summary-box').innerHTML += generateClassRankingsTable();
     </script>
 
 </body>
