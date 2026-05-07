@@ -530,6 +530,15 @@
             document.getElementById('overallGradeDisplay').innerHTML = 
                 average > 0 ? '<span class="grade-badge ' + overallGradeClass + '" style="font-size:16px; padding:6px 16px;">Grade ' + overallGrade + ' - ' + getInterpretation(overallGrade) + '</span>' : '';
         }
+        // After calculating and displaying overall average:
+calculateClassRank();
+
+// Add top 5 table
+var rankingsTable = generateClassRankingsTable();
+if (rankingsTable) {
+    document.querySelector('.summary-box').innerHTML += rankingsTable;
+}
+        
 
         // ==================== LOAD PERSONALITY ====================
         function loadPersonality() {
