@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card | School Report Portal</title>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #e8ecf1; min-height: 100vh; padding: 20px; }
@@ -108,14 +107,10 @@
     <!-- ==================== REPORT CARD ==================== -->
     <div class="report-card" id="reportCard">
         <div class="report-header">
-            <div class="badge">
-                <img src="school_logo.png" alt="School Logo">
-            </div>
-            <h1 id="schoolName">LIVING SPRING ADVENTIST ACADEMY</h1>
+            <div class="badge" id="schoolBadge">📚</div>
+            <h1 id="schoolNameDisplay">EXCEL ACADEMY SCHOOL</h1>
             <div class="subtitle">END OF TERM REPORT CARD</div>
-            <div class="school-contact">
-                📍 P.O. Box 25. Okadjakrom – Buem  | 📧 patiencedaves@gmail.com | 📞 +233 [0] 249 233 065/ +233 [0] 506437366/0542719064
-            </div>
+            <div class="school-contact">📍 123 Education Lane, Accra | 📧 info@excelacademy.edu.gh | 📞 0302-123-456</div>
         </div>
 
         <div class="student-strip">
@@ -161,6 +156,17 @@
                 <div><strong>Out Of:</strong> <span id="rptOutOf">-</span></div>
                 <div><strong>Promoted To:</strong> <span id="rptPromoted">-</span></div>
                 <div><strong>Next Term Begins:</strong> <span id="rptNextTerm">-</span></div>
+            </div>
+
+            <div class="section-title">📅 Term & Vacation Dates</div>
+            <div class="attendance-row">
+                <div><strong>Term Opens:</strong> <span id="rptTermOpens">-</span></div>
+                <div><strong>Term Closes:</strong> <span id="rptTermCloses">-</span></div>
+                <div><strong>Vacation Starts:</strong> <span id="rptVacationStarts">-</span></div>
+                <div><strong>Vacation Ends:</strong> <span id="rptVacationEnds">-</span></div>
+            </div>
+            <div class="attendance-row">
+                <div><strong>Vacation Duration:</strong> <span id="rptVacationDuration">-</span></div>
             </div>
 
             <div class="attendance-row">
@@ -245,7 +251,7 @@
             if (average > 0) calculateClassRanking(average);
         }
 
-        function calculateClassRanking(currentStudentAverage) {
+        function calculateClassRanking() {
             var currentClass = student.class;
             var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
             var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
@@ -263,7 +269,7 @@
                 var posText = getPositionSuffix(position);
                 var medal = position === 1 ? '🥇 ' : (position === 2 ? '🥈 ' : (position === 3 ? '🥉 ' : ''));
                 document.getElementById('classRankPosition').innerHTML = medal + posText + ' <span style="font-size:16px;">out of ' + totalStudents + '</span>';
-                document.getElementById('classRankDetail').textContent = 'Top performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
+                if (rankings.length > 0) document.getElementById('classRankDetail').textContent = 'Top performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
             } else {
                 document.getElementById('classRankPosition').textContent = 'Not ranked';
                 document.getElementById('classRankDetail').textContent = 'Enter scores to see ranking';
@@ -273,7 +279,7 @@
 
         function buildTop5Table(rankings) {
             var top5 = rankings.slice(0, 5);
-            if (top5.length === 0) return;
+            if (top5.length === 0) { document.getElementById('top5Container').innerHTML = ''; return; }
             var html = '<table class="top5-table"><thead><tr><th>#</th><th>Name</th><th>Avg</th><th>Grade</th></tr></thead><tbody>';
             top5.forEach(function(r, index) {
                 var medal = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : ''));
@@ -308,6 +314,11 @@
                 document.getElementById('rptOutOf').textContent = data.totalDays || '-';
                 document.getElementById('rptPromoted').textContent = data.promotedTo || '-';
                 document.getElementById('rptNextTerm').textContent = data.nextTermBegins || '-';
+                document.getElementById('rptTermOpens').textContent = data.termOpens || '-';
+                document.getElementById('rptTermCloses').textContent = data.termCloses || '-';
+                document.getElementById('rptVacationStarts').textContent = data.vacationStarts || '-';
+                document.getElementById('rptVacationEnds').textContent = data.vacationEnds || '-';
+                document.getElementById('rptVacationDuration').textContent = data.vacationDuration || '-';
                 document.getElementById('rptConduct').textContent = data.conduct || '-';
                 document.getElementById('rptInterest').textContent = data.interest || '-';
                 document.getElementById('rptTeacherRemarks').textContent = data.teacherRemarks || '-';
@@ -326,51 +337,28 @@
             return scores;
         }
 
-        function calculateAverage(scores) { if (scores.length === 0) return 0; var sum = scores.reduce(function(a, b) { return a + b; }, 0); return sum / scores.length; }
+        function calculateAverage(scores) { if (scores.length === 0) return 0; return scores.reduce(function(a, b) { return a + b; }, 0) / scores.length; }
         function getGrade(score) { if (score >= 80) return 'A'; if (score >= 70) return 'B'; if (score >= 60) return 'C'; if (score >= 50) return 'D'; if (score >= 40) return 'E'; return 'F'; }
         function getInterpretation(grade) { var map = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' }; return map[grade] || ''; }
         function getRemarks(score) { if (score >= 80) return 'Outstanding'; if (score >= 70) return 'Very Good Work'; if (score >= 60) return 'Good Effort'; if (score >= 50) return 'Satisfactory'; if (score >= 40) return 'Needs Improvement'; return 'See Teacher'; }
         function getPositionSuffix(pos) { if (pos === 1) return '1st'; if (pos === 2) return '2nd'; if (pos === 3) return '3rd'; return pos + 'th'; }
 
-        // ==================== PDF DOWNLOAD ====================
         function downloadPDF() {
-            var actionBar = document.querySelector('.action-bar');
-            var originalDisplay = actionBar.style.display;
-            actionBar.style.display = 'none';
+            var bar = document.querySelector('.action-bar');
+            var orig = bar.style.display;
+            bar.style.display = 'none';
             window.print();
-            setTimeout(function() { actionBar.style.display = originalDisplay; }, 1500);
+            setTimeout(function() { bar.style.display = orig; }, 1500);
         }
 
-        // ==================== SHARE VIA WHATSAPP ====================
         function shareWhatsApp() {
-            var studentName = student.name;
-            var studentClass = student.class;
-            var term = sessionStorage.getItem('term');
-            var year = sessionStorage.getItem('academicYear');
-            var avgElement = document.getElementById('overallAverage');
-            var average = avgElement ? avgElement.textContent : 'N/A';
-            var rankElement = document.getElementById('classRankPosition');
-            var ranking = rankElement ? rankElement.textContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : 'N/A';
-
-            var message = '*📚 SCHOOL REPORT CARD*\n\n';
-            message += '*Student:* ' + studentName + '\n';
-            message += '*Class:* ' + studentClass + '\n';
-            message += '*Term:* ' + term + '\n';
-            message += '*Year:* ' + year + '\n\n';
-            message += '*Overall Average:* ' + average + '\n';
-            message += '*Class Ranking:* ' + ranking + '\n\n';
-            message += '---\n';
-            message += '📊 Powered by iTech Systems Solutions\n📞 05X-XXX-XXXX';
-
-            var encodedMessage = encodeURIComponent(message);
-            var phoneNumber = prompt('Enter parent phone number with country code\n(e.g., 233241234567) or leave blank to choose contact:', '');
-            var whatsappURL;
-            if (phoneNumber && phoneNumber.trim() !== '') {
-                whatsappURL = 'https://wa.me/' + phoneNumber.replace(/[^0-9]/g, '') + '?text=' + encodedMessage;
-            } else {
-                whatsappURL = 'https://wa.me/?text=' + encodedMessage;
-            }
-            window.open(whatsappURL, '_blank');
+            var name = student.name, cls = student.class, term = sessionStorage.getItem('term'), year = sessionStorage.getItem('academicYear');
+            var avg = document.getElementById('overallAverage').textContent;
+            var rank = document.getElementById('classRankPosition').textContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+            var msg = '*📚 SCHOOL REPORT CARD*\n\n*Student:* ' + name + '\n*Class:* ' + cls + '\n*Term:* ' + term + '\n*Year:* ' + year + '\n\n*Overall Average:* ' + avg + '\n*Class Ranking:* ' + rank + '\n\n---\n📊 iTech Systems Solutions\n📞 05X-XXX-XXXX';
+            var phone = prompt('Enter parent phone number with country code\n(e.g., 233241234567) or leave blank:', '');
+            var url = phone ? 'https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg) : 'https://wa.me/?text=' + encodeURIComponent(msg);
+            window.open(url, '_blank');
         }
     </script>
 </body>
