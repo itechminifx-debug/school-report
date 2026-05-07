@@ -252,6 +252,43 @@
 
         function goBack() { window.location.href = 'index.html'; }
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+        function showClassRankings(className) {
+    var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
+    var classStudents = allStudents.filter(function(s) { return s.class === className; });
+    
+    var rankings = [];
+    classStudents.forEach(function(s) {
+        var scores = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (key.startsWith('score_' + s.id + '_')) {
+                var data = JSON.parse(localStorage.getItem(key));
+                if (data && data.total > 0) scores.push(data.total);
+            }
+        }
+        if (scores.length > 0) {
+            var avg = scores.reduce(function(a,b) { return a+b; }, 0) / scores.length;
+            rankings.push({ name: s.name, average: avg });
+        }
+    });
+    
+    rankings.sort(function(a,b) { return b.average - a.average; });
+    
+    var html = '<table class="data-table"><thead><tr><th>#</th><th>Name</th><th>Average</th></tr></thead><tbody>';
+    rankings.slice(0, 10).forEach(function(r, i) {
+        html += '<tr><td>' + (i+1) + '</td><td>' + r.name + '</td><td>' + r.average.toFixed(1) + '%</td></tr>';
+    });
+    html += '</tbody></table>';
+    
+    document.getElementById('classRankingsList').innerHTML = html;
+    document.getElementById('rankingCard').style.display = 'block';
+}
+
+// Call this when a class is selected
+function onClassSelected() {
+    // ... existing code ...
+    showClassRankings(selectedClass); // ADD THIS LINE
+}
     </script>
 </body>
 </html>
