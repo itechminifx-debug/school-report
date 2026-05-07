@@ -3,121 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SalesPro | Dashboard</title>
+    <title>Dashboard | School Report Portal</title>
     <style>
-        :root {
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --primary: #4f46e5;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--bg); min-height: 100vh; }
-        
-        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #1e293b; color: white; padding: 25px 20px; z-index: 100; }
-        .sidebar .logo { font-size: 22px; font-weight: 700; margin-bottom: 35px; }
-        .sidebar .logo span { color: #818cf8; }
-        .sidebar nav a { display: flex; align-items: center; gap: 10px; color: #94a3b8; text-decoration: none; padding: 10px 12px; border-radius: 8px; margin-bottom: 4px; font-size: 14px; transition: all 0.2s; }
-        .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.08); color: white; }
-        
-        .main-content { margin-left: 240px; padding: 25px; }
-        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .topbar h1 { font-size: 24px; color: var(--text); }
-        .topbar .user-badge { display: flex; align-items: center; gap: 10px; background: var(--card); padding: 8px 16px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 14px; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 25px; }
-        .stat-card { background: var(--card); border-radius: 16px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); position: relative; overflow: hidden; }
-        .stat-card .icon { position: absolute; right: 15px; top: 15px; font-size: 36px; opacity: 0.15; }
-        .stat-card .value { font-size: 30px; font-weight: 700; color: var(--text); }
-        .stat-card .label { font-size: 12px; color: var(--text-light); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-card.accent { border-left: 4px solid var(--primary); }
-        .stat-card.success { border-left: 4px solid var(--success); }
-        .stat-card.warning { border-left: 4px solid var(--warning); }
-        .stat-card.danger { border-left: 4px solid var(--danger); }
-        
-        .panel { background: var(--card); border-radius: 16px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 25px; }
-        .panel h3 { font-size: 16px; color: var(--text); margin-bottom: 18px; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        table th { background: #f8fafc; color: var(--text-light); padding: 12px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
-        table td { padding: 10px; border-bottom: 1px solid var(--border); color: var(--text); }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .badge-paid { background: #d1fae5; color: #065f46; }
-        .badge-pending { background: #fef3c7; color: #92400e; }
-        
-        .btn { padding: 10px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #4338ca; }
-        
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #f0f4f8; min-height: 100vh; }
+        .navbar { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .navbar .brand { font-size: 18px; font-weight: 700; }
+        .navbar .user-info { font-size: 14px; opacity: 0.9; }
+        .navbar .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .info-banner { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #2a5298; }
+        .info-banner h3 { color: #1e3c72; margin-bottom: 8px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 10px; }
+        .info-item { background: #f8fafc; padding: 10px; border-radius: 8px; }
+        .info-item .label { font-size: 11px; color: #888; text-transform: uppercase; }
+        .info-item .value { font-size: 15px; font-weight: 600; color: #333; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1e3c72; margin: 25px 0 15px; }
+        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; color: #444; margin-bottom: 6px; font-size: 14px; }
+        .form-group select, .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; background: #fafafa; }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: #1e3c72; background: white; }
+        .student-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; max-height: 400px; overflow-y: auto; }
+        .student-card { background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; text-align: center; }
+        .student-card:hover { border-color: #1e3c72; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .student-card.selected { border-color: #2a5298; background: #e8f0fe; }
+        .student-avatar { width: 50px; height: 50px; background: #e0e7ff; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #1e3c72; }
+        .student-name { font-weight: 600; font-size: 15px; color: #333; }
+        .student-id { font-size: 12px; color: #888; margin-top: 4px; }
+        .btn-group { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 150px; padding: 16px 20px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; }
+        .btn-primary { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,60,114,0.3); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 15px; }
+        @media (max-width: 600px) { .navbar .brand { font-size: 16px; } .student-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } .btn { font-size: 14px; padding: 14px; } }
     </style>
+    <script src="database.js"></script>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">Sales<span>Pro</span></div>
-        <nav>
-            <a href="dashboard.html" class="active">📊 Dashboard</a>
-            <a href="add_sale.html">💰 New Sale</a>
-            <a href="#">👥 Customers</a>
-            <a href="#">📦 Products</a>
-            <a href="#">📈 Reports</a>
-            <a href="index.html">🚪 Logout</a>
-        </nav>
+    <div class="navbar">
+        <div class="brand">📚 LIVING SPRING ADVENTIST ACADEMY</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span class="user-info" id="teacherDisplay">Teacher</span>
+            <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+        </div>
     </div>
 
-    <div class="main-content">
-        <div class="topbar">
-            <h1>Dashboard Overview</h1>
-            <div class="user-badge">👤 <span id="userDisplay">Admin</span></div>
+    <div class="container">
+        <div class="info-banner">
+            <h3>📋 Current Session</h3>
+            <div class="info-grid">
+                <div class="info-item"><div class="label">Category</div><div class="value" id="displayCategory">-</div></div>
+                <div class="info-item"><div class="label">Term</div><div class="value" id="displayTerm">-</div></div>
+                <div class="info-item"><div class="label">Academic Year</div><div class="value" id="displayYear">-</div></div>
+                <div class="info-item"><div class="label">Selected Class</div><div class="value" id="displayClass">-</div></div>
+            </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card accent"><div class="icon">💰</div><div class="value" id="totalSales">GHS 0</div><div class="label">Total Sales</div></div>
-            <div class="stat-card success"><div class="icon">👥</div><div class="value" id="totalCustomers">0</div><div class="label">Customers</div></div>
-            <div class="stat-card warning"><div class="icon">📅</div><div class="value" id="todaySales">GHS 0</div><div class="label">Today</div></div>
-            <div class="stat-card danger"><div class="icon">⏳</div><div class="value" id="pendingPayments">GHS 0</div><div class="label">Pending</div></div>
+        <div class="card">
+            <div class="section-title">🏫 Select Class</div>
+            <div class="form-group">
+                <label>Choose a Class</label>
+                <select id="classSelect" onchange="onClassSelected()">
+                    <option value="">-- Select Class --</option>
+                </select>
+            </div>
         </div>
 
-        <div class="panel">
-            <h3>Recent Transactions</h3>
-            <table>
-                <thead><tr><th>Date</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
-                <tbody id="recentTransactions"><tr><td colspan="5" style="text-align:center;color:#999;">No transactions yet</td></tr></tbody>
-            </table>
+        <div class="card" id="studentSection" style="display: none;">
+            <div class="section-title">👨‍🎓 Select Student</div>
+            <div class="form-group">
+                <label>Search Student</label>
+                <input type="text" id="studentSearch" placeholder="🔍 Type student name..." style="width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:10px; font-size:15px;" onkeyup="filterStudents()">
+            </div>
+            <div class="student-list" id="studentList">
+                <div class="empty-state"><div class="icon">📋</div><p>Select a class to view students</p></div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-primary" id="btnEnterScores" disabled onclick="enterScores()">📝 Enter Scores</button>
+            <button class="btn btn-success" id="btnViewReport" disabled onclick="viewReport()">📊 View Report Card</button>
+            <button class="btn btn-secondary" onclick="goBack()">🔙 Change Settings</button>
         </div>
     </div>
 
     <script>
-        window.onload = function() {
-            document.getElementById('userDisplay').textContent = sessionStorage.getItem('salesUser') || 'Admin';
-            var sales = JSON.parse(localStorage.getItem('sales_data')) || [];
-            var total = sales.reduce(function(s, i) { return s + i.amount; }, 0);
-            document.getElementById('totalSales').textContent = 'GHS ' + total.toLocaleString();
-            var customers = [...new Set(sales.map(function(s) { return s.customer; }))];
-            document.getElementById('totalCustomers').textContent = customers.length;
-            var today = new Date().toLocaleDateString();
-            var todayTotal = sales.filter(function(s) { return s.date === today; }).reduce(function(s, i) { return s + i.amount; }, 0);
-            document.getElementById('todaySales').textContent = 'GHS ' + todayTotal.toLocaleString();
-            var pending = sales.filter(function(s) { return s.status === 'Pending'; }).reduce(function(s, i) { return s + i.amount; }, 0);
-            document.getElementById('pendingPayments').textContent = 'GHS ' + pending.toLocaleString();
-            var recent = sales.slice(-5).reverse();
-            var tbody = document.getElementById('recentTransactions');
-            if (recent.length > 0) {
-                var html = '';
-                recent.forEach(function(s) {
-                    html += '<tr><td>' + s.date + '</td><td>' + s.customer + '</td><td>' + s.product + '</td><td>GHS ' + s.amount + '</td><td><span class="badge ' + (s.status === 'Paid' ? 'badge-paid' : 'badge-pending') + '">' + s.status + '</span></td></tr>';
-                });
-                tbody.innerHTML = html;
+        // ==================== LOAD STUDENTS FROM LOCAL STORAGE ====================
+        var studentsDatabase = [];
+
+        function loadStudentsFromLocalStorage() {
+            var savedStudents = localStorage.getItem('admin_students');
+            if (savedStudents) {
+                studentsDatabase = JSON.parse(savedStudents);
+            } else {
+                // Default fallback
+                studentsDatabase = [
+                    { id: 'STU0001', name: 'John Mensah', gender: 'Male', class: 'KG 1', house: 'Red House' },
+                    { id: 'STU0002', name: 'Ama Serwaa', gender: 'Female', class: 'KG 1', house: 'Blue House' },
+                    { id: 'STU0003', name: 'Kofi Asante', gender: 'Male', class: 'KG 2', house: 'Green House' },
+                    { id: 'STU0004', name: 'Efua Parker', gender: 'Female', class: 'Basic 1', house: 'Yellow House' },
+                    { id: 'STU0005', name: 'Yaw Boakye', gender: 'Male', class: 'JHS 2', house: 'Red House' }
+                ];
+                localStorage.setItem('admin_students', JSON.stringify(studentsDatabase));
             }
+        }
+
+        var selectedClass = '';
+        var selectedStudent = null;
+
+        var classesByCategory = {
+            'KG': ['KG 1', 'KG 2'],
+            'LowerPrimary': ['Basic 1', 'Basic 2', 'Basic 3'],
+            'UpperPrimary': ['Basic 4', 'Basic 5', 'Basic 6'],
+            'JHS': ['JHS 1', 'JHS 2', 'JHS 3']
         };
+
+        var categoryDisplayNames = {
+            'KG': 'KG (KG 1 & KG 2)',
+            'LowerPrimary': 'Lower Primary (Basic 1-3)',
+            'UpperPrimary': 'Upper Primary (Basic 4-6)',
+            'JHS': 'JHS (JHS 1-3)'
+        };
+
+        window.onload = function() {
+            var teacherName = sessionStorage.getItem('teacherName');
+            var category = sessionStorage.getItem('category');
+            var term = sessionStorage.getItem('term');
+            var year = sessionStorage.getItem('academicYear');
+
+            if (!teacherName || !category) {
+                alert('Please login first!');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('teacherDisplay').textContent = '👤 ' + teacherName;
+            document.getElementById('displayCategory').textContent = categoryDisplayNames[category] || category;
+            document.getElementById('displayTerm').textContent = term;
+            document.getElementById('displayYear').textContent = year;
+
+            // LOAD STUDENTS FROM LOCAL STORAGE
+            loadStudentsFromLocalStorage();
+            populateClassDropdown();
+        };
+
+        function populateClassDropdown() {
+            var category = sessionStorage.getItem('category');
+            var classes = classesByCategory[category] || [];
+            var classSelect = document.getElementById('classSelect');
+            classSelect.innerHTML = '<option value="">-- Select Class --</option>';
+            classes.forEach(function(cls) {
+                var option = document.createElement('option');
+                option.value = cls;
+                option.textContent = cls;
+                classSelect.appendChild(option);
+            });
+        }
+
+        function onClassSelected() {
+            selectedClass = document.getElementById('classSelect').value;
+            selectedStudent = null;
+            if (selectedClass) {
+                document.getElementById('displayClass').textContent = selectedClass;
+                document.getElementById('studentSection').style.display = 'block';
+                displayStudents(selectedClass);
+            } else {
+                document.getElementById('displayClass').textContent = '-';
+                document.getElementById('studentSection').style.display = 'none';
+            }
+            updateButtons();
+        }
+
+        function displayStudents(filterClass) {
+            var students = studentsDatabase.filter(function(s) { return s.class === filterClass; });
+            var listDiv = document.getElementById('studentList');
+            if (students.length === 0) {
+                listDiv.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No students found in ' + filterClass + '</p></div>';
+                return;
+            }
+            var html = '';
+            students.forEach(function(student) {
+                var isSelected = selectedStudent && selectedStudent.id === student.id;
+                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')" id="card_' + student.id + '">' +
+                    '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>' +
+                    '<div class="student-name">' + student.name + '</div>' +
+                    '<div class="student-id">' + student.id + ' | ' + (student.house || 'N/A') + '</div></div>';
+            });
+            listDiv.innerHTML = html;
+        }
+
+        function selectStudent(studentId) {
+            if (selectedStudent) {
+                var prevCard = document.getElementById('card_' + selectedStudent.id);
+                if (prevCard) prevCard.classList.remove('selected');
+            }
+            selectedStudent = studentsDatabase.find(function(s) { return s.id === studentId; });
+            var newCard = document.getElementById('card_' + studentId);
+            if (newCard) newCard.classList.add('selected');
+            updateButtons();
+        }
+
+        function filterStudents() {
+            var searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+            var students = studentsDatabase.filter(function(s) { return s.class === selectedClass; });
+            var filtered = searchTerm ? students.filter(function(s) {
+                return s.name.toLowerCase().indexOf(searchTerm) !== -1 || s.id.toLowerCase().indexOf(searchTerm) !== -1;
+            }) : students;
+            var listDiv = document.getElementById('studentList');
+            var html = '';
+            filtered.forEach(function(student) {
+                var isSelected = selectedStudent && selectedStudent.id === student.id;
+                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')">' +
+                    '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>' +
+                    '<div class="student-name">' + student.name + '</div>' +
+                    '<div class="student-id">' + student.id + '</div></div>';
+            });
+            listDiv.innerHTML = html || '<div class="empty-state"><div class="icon">🔍</div><p>No matching students</p></div>';
+        }
+
+        function updateButtons() {
+            document.getElementById('btnEnterScores').disabled = !selectedStudent;
+            document.getElementById('btnViewReport').disabled = !selectedStudent;
+        }
+
+        function enterScores() {
+            if (!selectedStudent) { alert('Please select a student first!'); return; }
+            sessionStorage.setItem('selectedStudent', JSON.stringify(selectedStudent));
+            sessionStorage.setItem('selectedClass', selectedClass);
+            window.location.href = 'score_entry.html';
+        }
+
+        function viewReport() {
+            if (!selectedStudent) { alert('Please select a student first!'); return; }
+            sessionStorage.setItem('selectedStudent', JSON.stringify(selectedStudent));
+            sessionStorage.setItem('selectedClass', selectedClass);
+            window.location.href = 'report_card.html';
+        }
+
+        function goBack() { window.location.href = 'index.html'; }
+        function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>
