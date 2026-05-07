@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Score Entry | EduReport Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #f0f4f8; min-height: 100vh; }
+        
+        .navbar { 
+            background: linear-gradient(135deg, #1e3c72, #2a5298); 
+            color: white; padding: 15px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        .navbar h2 { font-size: 18px; }
+        .navbar a { 
+            color: white; text-decoration: none; font-size: 13px; 
+            background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 6px; 
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .card { 
+            background: white; border-radius: 16px; padding: 20px; 
+            margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); 
+        }
+        .card h3 { color: #1e3c72; margin-bottom: 15px; }
+        
+        .form-row { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; margin-bottom: 15px; 
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { 
+            display: block; font-weight: 600; color: #333; 
+            margin-bottom: 6px; font-size: 14px; 
+        }
+        .form-group select, .form-group input { 
+            width: 100%; padding: 12px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; font-size: 15px; 
+        }
+        .form-group select:focus, .form-group input:focus { 
+            outline: none; border-color: #1e3c72; 
+        }
+        
+        .table-container { 
+            overflow-x: auto; max-height: 500px; overflow-y: auto; 
+            border: 1px solid #ddd; border-radius: 8px; 
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        table th { 
+            background: #1e3c72; color: white; padding: 10px 6px; 
+            font-size: 11px; text-align: center; position: sticky; top: 0; z-index: 10; 
+        }
+        table td { padding: 6px; border: 1px solid #ddd; text-align: center; }
+        table input { 
+            width: 55px; padding: 6px; text-align: center; 
+            border: 1px solid #ddd; border-radius: 4px; font-size: 12px; 
+        }
+        table input:focus { outline: none; border-color: #1e3c72; background: #f0f4ff; }
+        
+        .student-name { 
+            text-align: left; font-weight: 600; font-size: 12px; 
+            min-width: 130px; background: #f8fafc; 
+        }
+        .student-id { font-size: 10px; color: #888; }
+        .total-cell { font-weight: 700; color: #1e3c72; font-size: 13px; }
+        .grade-cell { font-weight: 700; font-size: 13px; }
+        
+        .grade-A { color: #155724; }
+        .grade-B { color: #004085; }
+        .grade-C { color: #856404; }
+        .grade-D { color: #e65100; }
+        .grade-E { color: #c62828; }
+        .grade-F { color: #b71c1c; }
+        
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        .btn { 
+            padding: 14px 24px; border: none; border-radius: 10px; 
+            font-size: 15px; font-weight: 600; cursor: pointer; 
+            transition: all 0.3s; 
+        }
+        .btn-primary { background: #1e3c72; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ff8f00; color: white; }
+        .btn-info { background: #1565c0; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        
+        .stats-row { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            gap: 12px; margin-bottom: 20px; 
+        }
+        .stat-card { 
+            background: white; border-radius: 12px; padding: 15px; 
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+        }
+        .stat-value { font-size: 28px; font-weight: 700; color: #1e3c72; }
+        .stat-label { font-size: 11px; color: #888; margin-top: 4px; }
+        
+        .toast { 
+            position: fixed; bottom: 20px; left: 20px; right: 20px; 
+            background: #28a745; color: white; padding: 16px; 
+            border-radius: 12px; text-align: center; z-index: 1000; display: none; 
+        }
+        .toast.error { background: #dc3545; }
+        
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            table { font-size: 10px; }
+            table input { width: 40px; padding: 4px; }
+            .btn { font-size: 13px; padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>📝 Bulk Score Entry</h2>
+        <div>
+            <a href="dashboard.html">🔙 Dashboard</a>
+            <a href="score_entry.html" style="margin-left:8px;">📝 Single Entry</a>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="statStudents">0</div>
+                <div class="stat-label">Students Loaded</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statEntered">0</div>
+                <div class="stat-label">Scores Entered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statAverage">-</div>
+                <div class="stat-label">Class Average</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statHighest">-</div>
+                <div class="stat-label">Highest Score</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <h3>🔍 Select Class & Subject</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>📌 Category</label>
+                    <select id="bulkCategory" onchange="updateClassDropdown()">
+                        <option value="">-- Select Category --</option>
+                        <option value="KG">KG (KG 1 - KG 2)</option>
+                        <option value="LowerPrimary">Lower Primary (Basic 1 - 3)</option>
+                        <option value="UpperPrimary">Upper Primary (Basic 4 - 6)</option>
+                        <option value="JHS">JHS (JHS 1 - 3)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🏫 Class</label>
+                    <select id="bulkClass" onchange="updateSubjectDropdown()">
+                        <option value="">-- Select Class --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📖 Subject</label>
+                    <select id="bulkSubject">
+                        <option value="">-- Select Subject --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="loadStudents()" style="width:100%;">
+                        🔍 Load Students
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Entry Table -->
+        <div class="card">
+            <h3>📋 Enter Scores</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Student Name / ID</th>
+                            <th>Class Score<br>(50%)</th>
+                            <th>Exam Score<br>(50%)</th>
+                            <th>Total<br>(100%)</th>
+                            <th>Grade</th>
+                            <th>Interpretation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulkTableBody">
+                        <tr><td colspan="6" class="empty-state">
+                            <div style="font-size:48px;">📋</div>
+                            <p>Select a class and subject, then click "Load Students"</p>
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="btn-row">
+                <button class="btn btn-warning" onclick="autoCalculateAll()">🧮 Calculate All</button>
+                <button class="btn btn-info" onclick="autoFillRandom()">🎲 Fill Sample Scores</button>
+                <button class="btn btn-success" onclick="saveAllScores()">💾 Save All Scores</button>
+                <button class="btn btn-secondary" onclick="clearAllScores()">🔄 Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==================== SUBJECTS BY CATEGORY ====================
+        const subjectsByCategory = {
+            'KG': ['Literacy', 'Numeracy', 'Creative Art', 'Religious and Moral Education', 'Phonics'],
+            'LowerPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Religious and Moral Education', 'French', 'Creative Art', 'Phonics'],
+            'UpperPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Creative Art', 'Religious and Moral Education', 'Computing', 'Ghanaian Language', 'French'],
+            'JHS': ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious and Moral Education', 'Career Technology', 'Computing', 'Ghanaian Language', 'Creative Art', 'French']
+        };
+
+        const classesByCategory = {
+            'KG': ['KG 1', 'KG 2'],
+            'LowerPrimary': ['Basic 1', 'Basic 2', 'Basic 3'],
+            'UpperPrimary': ['Basic 4', 'Basic 5', 'Basic 6'],
+            'JHS': ['JHS 1', 'JHS 2', 'JHS 3']
+        };
+
+        let currentStudents = [];
+
+        // ==================== DROPDOWN UPDATES ====================
+        function updateClassDropdown() {
+            const category = document.getElementById('bulkCategory').value;
+            const classSelect = document.getElementById('bulkClass');
+            classSelect.innerHTML = '<option value="">-- Select Class --</option>';
+            
+            if (category && classesByCategory[category]) {
+                classesByCategory[category].forEach(cls => {
+                    classSelect.innerHTML += '<option value="' + cls + '">' + cls + '</option>';
+                });
+            }
+            
+            document.getElementById('bulkSubject').innerHTML = '<option value="">-- Select Subject --</option>';
+        }
+
+        function updateSubjectDropdown() {
+            const category = document.getElementById('bulkCategory').value;
+            const subjectSelect = document.getElementById('bulkSubject');
+            subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+            
+            if (category && subjectsByCategory[category]) {
+                subjectsByCategory[category].forEach(subject => {
+                    subjectSelect.innerHTML += '<option value="' + subject + '">' + subject + '</option>';
+                });
+            }
+        }
+
+        // ==================== LOAD STUDENTS ====================
+        function loadStudents() {
+            const className = document.getElementById('bulkClass').value;
+            const subject = document.getElementById('bulkSubject').value;
+
+            if (!className) { showToast('Please select a class!', 'error'); return; }
+            if (!subject) { showToast('Please select a subject!', 'error'); return; }
+
+            // Get students from storage
+            const students = JSON.parse(localStorage.getItem('admin_students')) || [];
+            currentStudents = students.filter(s => s.class === className);
+
+            const tbody = document.getElementById('bulkTableBody');
+
+            if (currentStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">' +
+                    '<div style="font-size:48px;">📭</div>' +
+                    '<p>No students found in ' + className + '</p>' +
+                    '<p style="font-size:12px;">Add students via Admin Panel first</p>' +
+                    '</td></tr>';
+                document.getElementById('statStudents').textContent = '0';
+                return;
+            }
+
+            document.getElementById('statStudents').textContent = currentStudents.length;
+
+            const subjectId = subject.replace(/\s+/g, '_');
+            let html = '';
+
+            currentStudents.forEach(s => {
+                // Check for existing scores
+                const key = 'score_' + s.id + '_' + subjectId;
+                const saved = localStorage.getItem(key);
+                let classScore = '', examScore = '', total = '-', grade = '-', interpretation = '-';
+
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        classScore = data.classScore || '';
+                        examScore = data.examScore || '';
+                        total = data.total ? data.total.toFixed(1) : '-';
+                        grade = data.grade || '-';
+                        interpretation = getInterpretation(grade);
+                    } catch(e) {}
+                }
+
+                html += '<tr>' +
+                    '<td class="student-name">' + s.name + '<br><span class="student-id">' + s.id + '</span></td>' +
+                    '<td><input type="number" id="class_' + s.id + '" value="' + classScore + '" min="0" max="100" oninput="calcRow(\'' + s.id + '\')"></td>' +
+                    '<td><input type="number" id="exam_' + s.id + '" value="' + examScore + '" min="0" max="100" oninput="calcRow(\'' + s.id + '\')"></td>' +
+                    '<td class="total-cell" id="total_' + s.id + '">' + total + '</td>' +
+                    '<td class="grade-cell" id="grade_' + s.id + '">' + (grade !== '-' ? '<span class="grade-' + grade + '">' + grade + '</span>' : '-') + '</td>' +
+                    '<td style="font-size:11px;" id="interp_' + s.id + '">' + interpretation + '</td>' +
+                    '</tr>';
+            });
+
+            tbody.innerHTML = html;
+            updateStats();
+        }
+
+        // ==================== CALCULATIONS ====================
+        function calcRow(studentId) {
+            const classScore = parseFloat(document.getElementById('class_' + studentId).value) || 0;
+            const examScore = parseFloat(document.getElementById('exam_' + studentId).value) || 0;
+            const total = (classScore * 0.5) + (examScore * 0.5);
+            const grade = getGrade(total);
+            const interpretation = getInterpretation(grade);
+
+            document.getElementById('total_' + studentId).textContent = total.toFixed(1);
+            document.getElementById('grade_' + studentId).innerHTML = '<span class="grade-' + grade + '">' + grade + '</span>';
+            document.getElementById('interp_' + studentId).textContent = interpretation;
+
+            updateStats();
+        }
+
+        function autoCalculateAll() {
+            currentStudents.forEach(s => {
+                const classInput = document.getElementById('class_' + s.id);
+                const examInput = document.getElementById('exam_' + s.id);
+                if (classInput && examInput) {
+                    if (classInput.value || examInput.value) {
+                        calcRow(s.id);
+                    }
+                }
+            });
+            showToast('All scores calculated! ✅');
+        }
+
+        function autoFillRandom() {
+            currentStudents.forEach(s => {
+                const classInput = document.getElementById('class_' + s.id);
+                const examInput = document.getElementById('exam_' + s.id);
+                if (classInput && examInput) {
+                    classInput.value = Math.floor(Math.random() * 31) + 60; // 60-90
+                    examInput.value = Math.floor(Math.random() * 31) + 55;  // 55-85
+                    calcRow(s.id);
+                }
+            });
+            showToast('Sample scores filled! 🎲');
+        }
+
+        function getGrade(score) {
+            if (score >= 80) return 'A';
+            if (score >= 70) return 'B';
+            if (score >= 60) return 'C';
+            if (score >= 50) return 'D';
+            if (score >= 40) return 'E';
+            return 'F';
+        }
+
+        function getInterpretation(grade) {
+            const interpretations = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
+            return interpretations[grade] || '';
+        }
+
+        // ==================== STATS ====================
+        function updateStats() {
+            let enteredCount = 0;
+            let totalSum = 0;
+            let highestScore = 0;
+            let count = 0;
+
+            currentStudents.forEach(s => {
+                const totalEl = document.getElementById('total_' + s.id);
+                if (totalEl && totalEl.textContent !== '-') {
+                    const total = parseFloat(totalEl.textContent);
+                    if (!isNaN(total) && total > 0) {
+                        enteredCount++;
+                        totalSum += total;
+                        count++;
+                        if (total > highestScore) highestScore = total;
+                    }
+                }
+            });
+
+            document.getElementById('statEntered').textContent = enteredCount;
+            document.getElementById('statAverage').textContent = count > 0 ? (totalSum / count).toFixed(1) : '-';
+            document.getElementById('statHighest').textContent = count > 0 ? highestScore.toFixed(1) : '-';
+        }
+
+        // ==================== SAVE ====================
+        function saveAllScores() {
+            const subject = document.getElementById('bulkSubject').value;
+            if (!subject) { showToast('Please select a subject!', 'error'); return; }
+
+            const subjectId = subject.replace(/\s+/g, '_');
+            let savedCount = 0;
+
+            currentStudents.forEach(s => {
+                const classScore = parseFloat(document.getElementById('class_' + s.id).value) || 0;
+                const examScore = parseFloat(document.getElementById('exam_' + s.id).value) || 0;
+
+                if (classScore > 0 || examScore > 0) {
+                    const total = (classScore * 0.5) + (examScore * 0.5);
+                    const grade = getGrade(total);
+                    
+                    const key = 'score_' + s.id + '_' + subjectId;
+                    localStorage.setItem(key, JSON.stringify({ classScore, examScore, total, grade }));
+                    savedCount++;
+                }
+            });
+
+            showToast(savedCount + ' scores saved successfully! 💾');
+        }
+
+        function clearAllScores() {
+            if (confirm('Clear all scores in this table? This will NOT delete saved scores.')) {
+                currentStudents.forEach(s => {
+                    const classInput = document.getElementById('class_' + s.id);
+                    const examInput = document.getElementById('exam_' + s.id);
+                    if (classInput) classInput.value = '';
+                    if (examInput) examInput.value = '';
+                    document.getElementById('total_' + s.id).textContent = '-';
+                    document.getElementById('grade_' + s.id).innerHTML = '-';
+                    document.getElementById('interp_' + s.id).textContent = '-';
+                });
+                updateStats();
+                showToast('Table cleared! 🔄');
+            }
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || '');
+            toast.style.display = 'block';
+            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+        }
+
+        // ==================== KEYBOARD NAVIGATION ====================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const activeEl = document.activeElement;
+                if (activeEl && activeEl.tagName === 'INPUT') {
+                    e.preventDefault();
+                    // Find next input
+                    const inputs = Array.from(document.querySelectorAll('#bulkTableBody input'));
+                    const currentIndex = inputs.indexOf(activeEl);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                        inputs[currentIndex + 1].select();
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

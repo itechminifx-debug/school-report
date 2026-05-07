@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Card | EduReport Pro</title>
+    
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: #e8ecf1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .action-bar {
+            max-width: 800px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary { background: #1e3c72; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-info { background: #1565c0; color: white; }
+        .btn-warning { background: #ff8f00; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .report-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .report-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .report-header .badge {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .report-header .badge img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .report-header h1 {
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .report-header .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .report-header .school-contact {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 6px;
+        }
+
+        .student-strip {
+            background: #f8fafc;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .student-strip .info-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .student-strip .info-item {
+            color: #555;
+        }
+
+        .student-strip .info-item strong {
+            color: #1e3c72;
+        }
+
+        .report-body {
+            padding: 25px 30px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin: 20px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #1e3c72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .subjects-table th {
+            background: #1e3c72;
+            color: white;
+            padding: 10px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .subjects-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        .subjects-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .subjects-table .subject-name {
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .grade-A { background: #d4edda; color: #155724; }
+        .grade-B { background: #cce5ff; color: #004085; }
+        .grade-C { background: #fff3cd; color: #856404; }
+        .grade-D { background: #ffeeba; color: #856404; }
+        .grade-E { background: #f8d7da; color: #721c24; }
+        .grade-F { background: #f5c6cb; color: #721c24; }
+
+        .summary-box {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .summary-box .big-score {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .summary-box .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .personality-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .personality-item .trait-name {
+            font-weight: 500;
+            color: #444;
+        }
+
+        .attendance-row {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .remarks-section {
+            margin: 20px 0;
+        }
+
+        .remarks-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 60px;
+            color: #444;
+        }
+
+        .remarks-box strong {
+            color: #1e3c72;
+        }
+
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            padding-top: 8px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .report-footer {
+            background: #f0f0f0;
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            border-top: 1px solid #ddd;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .action-bar { display: none !important; }
+            .report-card { box-shadow: none; border-radius: 0; max-width: 100%; }
+            .report-header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .subjects-table th { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .summary-box { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        @media (max-width: 600px) {
+            .report-header h1 { font-size: 16px; }
+            .student-strip { font-size: 11px; padding: 10px 15px; }
+            .report-body { padding: 15px; }
+            .subjects-table { font-size: 11px; }
+            .subjects-table th, .subjects-table td { padding: 6px 4px; }
+            .signature-section { grid-template-columns: 1fr; }
+            .personality-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+    <script src="database.js"></script>
+</head>
+<body>
+
+    <!-- Action Buttons -->
+    <div class="action-bar">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
+        <button class="btn btn-success" onclick="downloadPDF()">📥 Download PDF</button>
+        <button class="btn btn-info" onclick="shareViaWhatsApp()">📱 Share via WhatsApp</button>
+        <button class="btn btn-warning" onclick="window.location.href='score_entry.html'">📝 Edit Scores</button>
+        <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">🔙 Dashboard</button>
+    </div>
+
+    <!-- Report Card -->
+    <div class="report-card" id="reportCard">
+        
+        <!-- Header -->
+        <div class="report-header">
+            <div class="badge">
+                <img src="images/school_logo.png" alt="School Logo">
+            </div>
+            <h1 id="schoolName">LIVING SPRING ADVENTIST ACADEMY</h1>
+            <div class="subtitle">END OF TERM REPORT CARD</div>
+            <div class="school-contact">
+                📍 P.O. Box 25. Okadjakrom – Buem  | 📧 patiencedaves@gmail.com | 📞 +233 [0] 249 233 065/ +233 [0] 506437366/0542719064
+            </div>
+        </div>
+
+        <!-- Student Info Strip -->
+        <div class="student-strip">
+            <div class="info-group">
+                <div class="info-item"><strong>Name:</strong> <span id="rptName">-</span></div>
+                <div class="info-item"><strong>ID:</strong> <span id="rptID">-</span></div>
+                <div class="info-item"><strong>Class:</strong> <span id="rptClass">-</span></div>
+            </div>
+            <div class="info-group">
+                <div class="info-item"><strong>House:</strong> <span id="rptHouse">-</span></div>
+                <div class="info-item"><strong>Term:</strong> <span id="rptTerm">-</span></div>
+                <div class="info-item"><strong>Year:</strong> <span id="rptYear">-</span></div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="report-body">
+            
+            <!-- Academic Performance -->
+            <div class="section-title">📖 Academic Performance</div>
+            <table class="subjects-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;">Subject</th>
+                        <th>Class (50%)</th>
+                        <th>Exam (50%)</th>
+                        <th>Total</th>
+                        <th>Grade</th>
+                        <th>Interpretation</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectsTableBody">
+                    <tr><td colspan="7" style="text-align:center; padding:20px;">Loading scores...</td></tr>
+                </tbody>
+            </table>
+
+            <!-- Overall Summary -->
+            <div class="summary-box">
+                <div class="big-score" id="overallAverage">-</div>
+                <div class="summary-label">OVERALL AVERAGE</div>
+                <div style="margin-top:10px; font-size:16px;" id="overallGradeDisplay"></div>
+            </div>
+
+            <!-- Personality Development -->
+            <div class="section-title">🌟 Personality Development</div>
+            <div class="personality-grid" id="personalityGrid"></div>
+
+            <!-- Attendance & Promotion -->
+            <div class="section-title">📋 Attendance & Promotion</div>
+            <div class="attendance-row">
+                <div><strong>Total Attendance:</strong> <span id="rptAttendance">-</span></div>
+                <div><strong>Out Of:</strong> <span id="rptOutOf">-</span></div>
+                <div><strong>Promoted To:</strong> <span id="rptPromoted">-</span></div>
+                <div><strong>Next Term Begins:</strong> <span id="rptNextTerm">-</span></div>
+                <div><strong>📅 Vacation Date:</strong> <span id="rptVacationDate">-</span></div>
+            </div>
+
+            <!-- Conduct & Interest -->
+            <div class="attendance-row">
+                <div><strong>Conduct:</strong> <span id="rptConduct">-</span></div>
+                <div><strong>Interest:</strong> <span id="rptInterest">-</span></div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="section-title">💬 Remarks</div>
+            <div class="remarks-section">
+                <div class="remarks-box">
+                    <strong>Class Teacher's Remarks:</strong><br>
+                    <span id="rptTeacherRemarks">-</span>
+                </div>
+                <div class="remarks-box">
+                    <strong>Head Teacher's Remarks:</strong><br>
+                    <span id="rptHeadRemarks">-</span>
+                </div>
+            </div>
+
+            <!-- Signatures -->
+            <div class="signature-section">
+                <div class="signature-line">Class Teacher</div>
+                <div class="signature-line">Head Teacher</div>
+                <div class="signature-line">Parent / Guardian</div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="report-footer">
+            © 2025 iTech Systems Solutions | EduReport Pro | Generated on <span id="rptDate"></span>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA ====================
+        const subjectsByCategory = {
+            'KG': ['Literacy', 'Numeracy', 'Creative Art', 'Religious and Moral Education', 'Phonics'],
+            'LowerPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Religious and Moral Education', 'French', 'Creative Art', 'Phonics'],
+            'UpperPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Creative Art', 'Religious and Moral Education', 'Computing', 'Ghanaian Language', 'French'],
+            'JHS': ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious and Moral Education', 'Career Technology', 'Computing', 'Ghanaian Language', 'Creative Art', 'French']
+        };
+
+        const personalityTraits = [
+            'Leadership Ability', 'Basic Life Skills', 'Neatness', 'Sociability',
+            'Creativity and Initiative', 'Dependability', 'Recreation', 'Work Habits'
+        ];
+
+        const classLevels = ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'];
+
+        let student = null;
+        let category = '';
+
+        // ==================== INITIALIZATION ====================
+        window.onload = function() {
+            student = JSON.parse(sessionStorage.getItem('selectedStudent'));
+            category = sessionStorage.getItem('category');
+
+            if (!student) {
+                alert('No student selected! Returning to dashboard.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            document.getElementById('rptName').textContent = student.name || '-';
+            document.getElementById('rptID').textContent = student.id || '-';
+            document.getElementById('rptClass').textContent = student.class || '-';
+            document.getElementById('rptHouse').textContent = student.house || 'N/A';
+            document.getElementById('rptTerm').textContent = sessionStorage.getItem('term') || '-';
+            document.getElementById('rptYear').textContent = sessionStorage.getItem('academicYear') || '-';
+            document.getElementById('rptDate').textContent = new Date().toLocaleDateString();
+
+            loadSavedSettings();
+            loadScores();
+            loadPersonality();
+        };
+
+        // ==================== LOAD SCORES ====================
+        function loadScores() {
+            const subjects = subjectsByCategory[category] || [];
+            const tbody = document.getElementById('subjectsTableBody');
+            let totalSum = 0;
+            let count = 0;
+            let html = '';
+
+            subjects.forEach(subject => {
+                const subjectId = subject.replace(/\s+/g, '_');
+                const key = 'score_' + student.id + '_' + subjectId;
+                const saved = localStorage.getItem(key);
+
+                let classScore = 0, examScore = 0, total = 0, grade = '-', interpretation = '-', remarks = '-';
+
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        classScore = data.classScore || 0;
+                        examScore = data.examScore || 0;
+                        total = data.total || 0;
+                        grade = data.grade || '-';
+                    } catch(e) {}
+                }
+
+                interpretation = getInterpretation(grade);
+                remarks = getRemarks(total);
+
+                if (total > 0) { totalSum += total; count++; }
+
+                const gradeClass = grade !== '-' ? 'grade-' + grade : '';
+
+                html += '<tr>' +
+                    '<td class="subject-name">📖 ' + subject + '</td>' +
+                    '<td>' + (classScore > 0 ? classScore : '-') + '</td>' +
+                    '<td>' + (examScore > 0 ? examScore : '-') + '</td>' +
+                    '<td><strong>' + (total > 0 ? total.toFixed(1) : '-') + '</strong></td>' +
+                    '<td><span class="grade-badge ' + gradeClass + '">' + grade + '</span></td>' +
+                    '<td style="font-size:12px;">' + interpretation + '</td>' +
+                    '<td style="font-size:11px;">' + remarks + '</td>' +
+                    '</tr>';
+            });
+
+            tbody.innerHTML = html;
+
+            const average = count > 0 ? totalSum / count : 0;
+            const overallGrade = getGrade(average);
+            const overallGradeClass = 'grade-' + overallGrade;
+
+            document.getElementById('overallAverage').textContent = average > 0 ? average.toFixed(1) + '%' : '-';
+            document.getElementById('overallGradeDisplay').innerHTML = 
+                average > 0 ? '<span class="grade-badge ' + overallGradeClass + '" style="font-size:16px; padding:6px 16px;">Grade ' + overallGrade + ' - ' + getInterpretation(overallGrade) + '</span>' : '';
+        }
+
+        // ==================== LOAD PERSONALITY ====================
+        function loadPersonality() {
+            const grid = document.getElementById('personalityGrid');
+            const sampleGrades = ['A', 'A', 'B', 'B', 'B', 'C'];
+            let html = '';
+
+            personalityTraits.forEach(trait => {
+                const savedKey = 'personality_' + student.id + '_' + trait.replace(/\s+/g, '_');
+                const saved = localStorage.getItem(savedKey);
+                let grade = '-';
+
+                if (saved) {
+                    try { const data = JSON.parse(saved); grade = data.grade || '-'; } catch(e) {}
+                }
+                if (grade === '-') { grade = sampleGrades[Math.floor(Math.random() * sampleGrades.length)]; }
+
+                const gradeClass = 'grade-' + grade;
+                html += '<div class="personality-item">' +
+                    '<span class="trait-name">' + trait + '</span>' +
+                    '<span class="grade-badge ' + gradeClass + '">' + grade + '</span>' +
+                    '</div>';
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // ==================== LOAD SAVED SETTINGS ====================
+        function loadSavedSettings() {
+            const settingsKey = 'settings_' + student.id;
+            const savedSettings = localStorage.getItem(settingsKey);
+
+            if (savedSettings) {
+                try {
+                    const data = JSON.parse(savedSettings);
+                    document.getElementById('rptAttendance').textContent = data.daysPresent || '-';
+                    document.getElementById('rptOutOf').textContent = data.totalDays || '-';
+                    document.getElementById('rptPromoted').textContent = data.promotedTo || getNextClass(student.class);
+                    document.getElementById('rptNextTerm').textContent = data.nextTermBegins || '-';
+                    document.getElementById('rptVacationDate').textContent = data.vacationDate || '-';
+                    document.getElementById('rptConduct').textContent = data.conduct || '-';
+                    document.getElementById('rptInterest').textContent = data.interest || '-';
+                    document.getElementById('rptTeacherRemarks').textContent = data.teacherRemarks || '-';
+                    document.getElementById('rptHeadRemarks').textContent = data.headRemarks || '-';
+                } catch(e) { setDefaults(); }
+            } else { setDefaults(); }
+        }
+
+        function setDefaults() {
+            document.getElementById('rptAttendance').textContent = '-';
+            document.getElementById('rptOutOf').textContent = '-';
+            document.getElementById('rptPromoted').textContent = getNextClass(student.class);
+            document.getElementById('rptNextTerm').textContent = '-';
+            document.getElementById('rptVacationDate').textContent = '-';
+            document.getElementById('rptConduct').textContent = '-';
+            document.getElementById('rptInterest').textContent = '-';
+            document.getElementById('rptTeacherRemarks').textContent = '-';
+            document.getElementById('rptHeadRemarks').textContent = '-';
+        }
+
+        // ==================== HELPERS ====================
+        function getGrade(score) {
+            if (score >= 80) return 'A';
+            if (score >= 70) return 'B';
+            if (score >= 60) return 'C';
+            if (score >= 50) return 'D';
+            if (score >= 40) return 'E';
+            return 'F';
+        }
+
+        function getInterpretation(grade) {
+            const interpretations = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
+            return interpretations[grade] || '';
+        }
+
+        function getRemarks(score) {
+            if (score >= 80) return 'Outstanding';
+            if (score >= 70) return 'Very Good Work';
+            if (score >= 60) return 'Good Effort';
+            if (score >= 50) return 'Satisfactory';
+            if (score >= 40) return 'Needs Improvement';
+            return 'See Teacher';
+        }
+
+        function getNextClass(currentClass) {
+            const index = classLevels.indexOf(currentClass);
+            if (index === -1 || index >= classLevels.length - 1) return 'Graduated';
+            return classLevels[index + 1];
+        }
+
+        // ==================== PDF DOWNLOAD ====================
+        function downloadPDF() {
+            const element = document.getElementById('reportCard');
+            const studentName = document.getElementById('rptName').textContent || 'Student';
+            const opt = {
+                margin: 3,
+                filename: 'Report_Card_' + studentName.replace(/\s+/g, '_') + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // ==================== WHATSAPP SHARE ====================
+        function shareViaWhatsApp() {
+            const studentName = document.getElementById('rptName').textContent || 'Student';
+            const average = document.getElementById('overallAverage').textContent || '-';
+            const term = document.getElementById('rptTerm').textContent || '-';
+            const className = document.getElementById('rptClass').textContent || '-';
+            const message = '📊 *REPORT CARD*%0A%0A' +
+                'Student: *' + studentName + '*%0A' +
+                'Class: ' + className + '%0A' +
+                'Term: ' + term + '%0A' +
+                'Average: *' + average + '*%0A%0A' +
+                'Full report available at the school portal.';
+            window.open('https://wa.me/?text=' + message, '_blank');
+        }
+    </script>
+
+</body>
+</html>

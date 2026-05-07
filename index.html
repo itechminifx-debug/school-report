@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Report Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .login-container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 450px; overflow: hidden; }
+        .login-header { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px; text-align: center; }
+        .login-header .logo { width: 80px; height: 80px; background: white; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 36px; color: #1e3c72; font-weight: bold; }
+        .login-header h1 { font-size: 22px; margin-bottom: 5px; }
+        .login-header p { font-size: 13px; opacity: 0.9; }
+        .login-body { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px; }
+        .form-group select, .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; background: #fafafa; }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: #1e3c72; background: white; }
+        .btn-login { width: 100%; padding: 16px; background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(30,60,114,0.3); }
+        .login-footer { text-align: center; padding: 20px; background: #f5f5f5; font-size: 12px; color: #888; }
+        .login-footer a { color: #1e3c72; text-decoration: none; }
+        .error-msg { color: #dc3545; font-size: 13px; margin-top: 5px; display: none; }
+    </style>
+    <script src="database.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">📚</div>
+            <h1>LIVING SPRING ADVENTIST ACADEMY</h1>
+            <p>Report Card Management System</p>
+        </div>
+        <div class="login-body">
+            <div class="form-group">
+                <label>👤 Teacher Name</label>
+                <select id="teacherSelect">
+                    <option value="">-- Loading teachers... --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>🔑 Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password">
+                <div class="error-msg" id="passwordError">Invalid password! Please try again.</div>
+            </div>
+            <div class="form-group">
+                <label>📌 Select Category</label>
+                <select id="categorySelect">
+                    <option value="">-- Select Category --</option>
+                    <option value="KG">KG (KG 1 - KG 2)</option>
+                    <option value="LowerPrimary">Lower Primary (Basic 1 - 3)</option>
+                    <option value="UpperPrimary">Upper Primary (Basic 4 - 6)</option>
+                    <option value="JHS">JHS (JHS 1 - 3)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📅 Academic Term</label>
+                <select id="termSelect">
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📆 Academic Year</label>
+                <input type="text" id="yearInput" value="2025/2026" placeholder="e.g., 2025/2026">
+            </div>
+            <button class="btn-login" onclick="login()">🚀 Enter Portal</button>
+        </div>
+        <div class="login-footer">
+            © 2025 iTech Systems Solutions 
+        </div>
+    </div>
+
+    <script>
+        // Load teachers from localStorage
+        function loadTeachers() {
+            var select = document.getElementById('teacherSelect');
+            var savedTeachers = localStorage.getItem('admin_teachers');
+            var teachers = [];
+            if (savedTeachers) { teachers = JSON.parse(savedTeachers); }
+            select.innerHTML = '<option value="">-- Select Your Name --</option>';
+            if (teachers.length > 0) {
+                teachers.forEach(function(t) {
+                    var fullName = t.title + ' ' + t.name;
+                    select.innerHTML += '<option value="' + fullName + '">' + fullName + '</option>';
+                });
+            } else {
+                select.innerHTML += '<option value="Mr. Mensah">Mr. Mensah</option>';
+                select.innerHTML += '<option value="Mrs. Appiah">Mrs. Appiah</option>';
+                select.innerHTML += '<option value="Mr. Osei">Mr. Osei</option>';
+                select.innerHTML += '<option value="Ms. Asante">Ms. Asante</option>';
+                select.innerHTML += '<option value="Mr. Boadu">Mr. Boadu</option>';
+                // Save defaults to localStorage
+                var defaultTeachers = [
+                    {title: 'Mr.', name: 'Mensah'}, {title: 'Mrs.', name: 'Appiah'},
+                    {title: 'Mr.', name: 'Osei'}, {title: 'Ms.', name: 'Asante'}, {title: 'Mr.', name: 'Boadu'}
+                ];
+                localStorage.setItem('admin_teachers', JSON.stringify(defaultTeachers));
+            }
+        }
+
+        window.onload = function() { loadTeachers(); };
+
+        function login() {
+            var teacher = document.getElementById('teacherSelect').value;
+            var password = document.getElementById('passwordInput').value;
+            var category = document.getElementById('categorySelect').value;
+            var term = document.getElementById('termSelect').value;
+            var year = document.getElementById('yearInput').value;
+
+            document.getElementById('passwordError').style.display = 'none';
+
+            if (!teacher) { alert('Please select your name!'); return; }
+            if (!password) { alert('Please enter your password!'); return; }
+            if (!category) { alert('Please select a category!'); return; }
+
+            // Check password from admin_teachers
+            var savedTeachers = localStorage.getItem('admin_teachers');
+            var teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
+            var foundTeacher = null;
+            for (var i = 0; i < teachers.length; i++) {
+                if ((teachers[i].title + ' ' + teachers[i].name) === teacher) {
+                    foundTeacher = teachers[i];
+                    break;
+                }
+            }
+
+            var validPassword = foundTeacher ? (foundTeacher.password || '1234') : '1234';
+
+            if (password !== validPassword) {
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
+
+            sessionStorage.setItem('teacherName', teacher);
+            sessionStorage.setItem('category', category);
+            sessionStorage.setItem('term', term);
+            sessionStorage.setItem('academicYear', year);
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personality & Settings | EduReport Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #f0f4f8; min-height: 100vh; padding-bottom: 60px; }
+        .navbar { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .navbar .brand { font-size: 18px; font-weight: 700; }
+        .navbar a { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .section-title { font-size: 18px; font-weight: 700; color: #1e3c72; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .student-banner { background: #f0f4fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #1e3c72; }
+        .student-banner strong { color: #1e3c72; }
+
+        .trait-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .trait-item { background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e8e8e8; }
+        .trait-item label { font-weight: 600; font-size: 14px; color: #444; display: block; margin-bottom: 8px; }
+        .trait-item select { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; color: #444; margin-bottom: 6px; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1e3c72; }
+        .form-group textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+
+        .btn-group { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 150px; padding: 16px 20px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; }
+        .btn-primary { background: #1e3c72; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #28a745; color: white; padding: 16px; border-radius: 12px; text-align: center; z-index: 1000; display: none; }
+        .toast.error { background: #dc3545; }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .trait-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script src="database.js"></script>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="brand">🌟 Personality & Settings</div>
+        <a href="score_entry.html">🔙 Back to Scores</a>
+    </div>
+
+    <div class="container">
+
+        <!-- Student Info -->
+        <div class="student-banner">
+            <strong id="bannerName">Student Name</strong> | 
+            ID: <span id="bannerID">-</span> | 
+            Class: <span id="bannerClass">-</span>
+        </div>
+
+        <!-- Personality Development -->
+        <div class="card">
+            <div class="section-title">🌟 Personality Development</div>
+            <div class="trait-grid" id="traitGrid"></div>
+        </div>
+
+        <!-- Attendance & Promotion -->
+        <div class="card">
+            <div class="section-title">📋 Attendance & Promotion</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Days Present</label>
+                    <input type="number" id="daysPresent" placeholder="e.g., 42" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Total School Days</label>
+                    <input type="number" id="totalDays" placeholder="e.g., 48" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Promoted To</label>
+                    <input type="text" id="promotedTo" placeholder="e.g., KG 2">
+                </div>
+                <div class="form-group">
+                    <label>Next Term Begins</label>
+                    <input type="text" id="nextTermBegins" placeholder="e.g., January 12, 2026">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>📅 Date for Vacation</label>
+                    <input type="text" id="vacationDate" placeholder="e.g., December 15, 2025">
+                </div>
+                <div class="form-group">
+                    <!-- Spacer for alignment -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Conduct & Interest -->
+        <div class="card">
+            <div class="section-title">🎯 Conduct & Interest</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Conduct Rating</label>
+                    <select id="conductSelect">
+                        <option value="Excellent">Excellent</option>
+                        <option value="Very Good" selected>Very Good</option>
+                        <option value="Good">Good</option>
+                        <option value="Satisfactory">Satisfactory</option>
+                        <option value="Needs Improvement">Needs Improvement</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Interest Rating</label>
+                    <select id="interestSelect">
+                        <option value="Excellent" selected>Excellent</option>
+                        <option value="Very Good">Very Good</option>
+                        <option value="Good">Good</option>
+                        <option value="Satisfactory">Satisfactory</option>
+                        <option value="Needs Improvement">Needs Improvement</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remarks -->
+        <div class="card">
+            <div class="section-title">💬 Remarks</div>
+            
+            <div class="form-group">
+                <label><strong>Class Teacher's Remarks</strong></label>
+                <select id="teacherRemarksSelect" onchange="checkCustomTeacher()">
+                    <option value="">-- Select Remark --</option>
+                    <option value="An excellent student who consistently performs well. Keep it up!">⭐ Excellent Performance - Keep it up!</option>
+                    <option value="A very good student who shows great enthusiasm for learning.">👍 Very Good - Shows great enthusiasm</option>
+                    <option value="A good student making steady progress. Continue working hard.">📚 Good Progress - Continue working hard</option>
+                    <option value="An average student who needs to put in more effort.">📖 Average - Needs more effort</option>
+                    <option value="Needs significant improvement. More attention required in class.">⚠️ Needs Improvement - More attention required</option>
+                    <option value="A dedicated student who participates actively in class activities.">🌟 Dedicated - Participates actively</option>
+                    <option value="Has shown remarkable improvement this term. Well done!">🚀 Remarkable Improvement - Well done!</option>
+                    <option value="A well-behaved student who relates well with peers.">😊 Well-Behaved - Good with peers</option>
+                    <option value="CUSTOM">✏️ Write Custom Remark...</option>
+                </select>
+            </div>
+            <div class="form-group" id="customTeacherDiv" style="display:none;">
+                <label>Your Custom Remark</label>
+                <textarea id="customTeacherRemarks" rows="3" placeholder="Type your custom remark here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label><strong>Head Teacher's Remarks</strong></label>
+                <select id="headRemarksSelect" onchange="checkCustomHead()">
+                    <option value="">-- Select Remark --</option>
+                    <option value="Approved. Excellent performance. Keep soaring higher!">⭐ Approved - Excellent</option>
+                    <option value="Approved. Good work. Continue to improve.">👍 Approved - Good work</option>
+                    <option value="Approved. Average performance. Work harder next term.">📚 Approved - Work harder</option>
+                    <option value="Approved. Significant improvement needed. See me.">⚠️ Approved - Needs improvement</option>
+                    <option value="Promoted to the next class. Congratulations!">🎓 Promoted - Congratulations!</option>
+                    <option value="Repeat. More effort required to meet expectations.">🔄 Repeat - More effort required</option>
+                    <option value="Pending. Parents to meet Head Teacher.">📋 Pending - Parents meeting</option>
+                    <option value="CUSTOM">✏️ Write Custom Remark...</option>
+                </select>
+            </div>
+            <div class="form-group" id="customHeadDiv" style="display:none;">
+                <label>Your Custom Remark</label>
+                <textarea id="customHeadRemarks" rows="3" placeholder="Type your custom remark here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveAllAndViewReport()">💾 Save & View Full Report</button>
+            <button class="btn btn-success" onclick="saveAll()">💾 Save Only</button>
+            <button class="btn btn-secondary" onclick="window.location.href='score_entry.html'">🔙 Back to Scores</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const personalityTraits = [
+            'Leadership Ability', 'Basic Life Skills', 'Neatness', 'Sociability',
+            'Creativity and Initiative', 'Dependability', 'Recreation', 'Work Habits'
+        ];
+        const gradeOptions = ['A', 'B', 'C', 'D', 'E', 'F'];
+        let student = null;
+
+        // ==================== INITIALIZATION ====================
+        window.onload = function() {
+            student = JSON.parse(sessionStorage.getItem('selectedStudent'));
+            if (!student) { alert('No student selected!'); window.location.href = 'dashboard.html'; return; }
+
+            document.getElementById('bannerName').textContent = student.name;
+            document.getElementById('bannerID').textContent = student.id;
+            document.getElementById('bannerClass').textContent = student.class;
+
+            loadTraitGrid();
+            loadSavedSettings();
+        };
+
+        // ==================== TRAIT GRID ====================
+        function loadTraitGrid() {
+            const grid = document.getElementById('traitGrid');
+            let html = '';
+            personalityTraits.forEach(trait => {
+                const traitId = trait.replace(/\s+/g, '_');
+                let optionsHtml = '<option value="">-- Select --</option>';
+                gradeOptions.forEach(g => {
+                    optionsHtml += '<option value="' + g + '">' + g + ' - ' + getInterpretation(g) + '</option>';
+                });
+                html += '<div class="trait-item"><label>' + trait + '</label><select id="trait_' + traitId + '">' + optionsHtml + '</select></div>';
+            });
+            grid.innerHTML = html;
+        }
+
+        // ==================== LOAD SAVED SETTINGS ====================
+        function loadSavedSettings() {
+            const settingsKey = 'settings_' + student.id;
+            const savedSettings = localStorage.getItem(settingsKey);
+            
+            if (savedSettings) {
+                const data = JSON.parse(savedSettings);
+                document.getElementById('daysPresent').value = data.daysPresent || '';
+                document.getElementById('totalDays').value = data.totalDays || '';
+                document.getElementById('promotedTo').value = data.promotedTo || '';
+                document.getElementById('nextTermBegins').value = data.nextTermBegins || '';
+                document.getElementById('vacationDate').value = data.vacationDate || '';
+                document.getElementById('conductSelect').value = data.conduct || 'Very Good';
+                document.getElementById('interestSelect').value = data.interest || 'Excellent';
+
+                // Load teacher remarks
+                const teacherSelect = document.getElementById('teacherRemarksSelect');
+                const teacherSaved = data.teacherRemarks || '';
+                if (teacherSaved && !optionExists(teacherSelect, teacherSaved)) {
+                    teacherSelect.value = 'CUSTOM';
+                    document.getElementById('customTeacherDiv').style.display = 'block';
+                    document.getElementById('customTeacherRemarks').value = teacherSaved;
+                } else {
+                    teacherSelect.value = teacherSaved;
+                }
+
+                // Load head remarks
+                const headSelect = document.getElementById('headRemarksSelect');
+                const headSaved = data.headRemarks || '';
+                if (headSaved && !optionExists(headSelect, headSaved)) {
+                    headSelect.value = 'CUSTOM';
+                    document.getElementById('customHeadDiv').style.display = 'block';
+                    document.getElementById('customHeadRemarks').value = headSaved;
+                } else {
+                    headSelect.value = headSaved;
+                }
+
+                // Load personality traits
+                personalityTraits.forEach(trait => {
+                    const traitId = trait.replace(/\s+/g, '_');
+                    const key = 'personality_' + student.id + '_' + traitId;
+                    const saved = localStorage.getItem(key);
+                    if (saved) {
+                        const tData = JSON.parse(saved);
+                        const selectEl = document.getElementById('trait_' + traitId);
+                        if (selectEl) selectEl.value = tData.grade || '';
+                    }
+                });
+            }
+        }
+
+        function optionExists(select, value) {
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === value) return true;
+            }
+            return false;
+        }
+
+        // ==================== CUSTOM REMARKS ====================
+        function checkCustomTeacher() {
+            const select = document.getElementById('teacherRemarksSelect');
+            const customDiv = document.getElementById('customTeacherDiv');
+            if (select.value === 'CUSTOM') {
+                customDiv.style.display = 'block';
+            } else {
+                customDiv.style.display = 'none';
+            }
+        }
+
+        function checkCustomHead() {
+            const select = document.getElementById('headRemarksSelect');
+            const customDiv = document.getElementById('customHeadDiv');
+            if (select.value === 'CUSTOM') {
+                customDiv.style.display = 'block';
+            } else {
+                customDiv.style.display = 'none';
+            }
+        }
+
+        // ==================== SAVE ====================
+        function saveAll() {
+            // Save personality traits
+            personalityTraits.forEach(trait => {
+                const traitId = trait.replace(/\s+/g, '_');
+                const grade = document.getElementById('trait_' + traitId).value;
+                const key = 'personality_' + student.id + '_' + traitId;
+                localStorage.setItem(key, JSON.stringify({ grade }));
+            });
+
+            // Get teacher remarks
+            let teacherRemarksText = document.getElementById('teacherRemarksSelect').value;
+            if (teacherRemarksText === 'CUSTOM') {
+                teacherRemarksText = document.getElementById('customTeacherRemarks').value;
+            }
+
+            // Get head remarks
+            let headRemarksText = document.getElementById('headRemarksSelect').value;
+            if (headRemarksText === 'CUSTOM') {
+                headRemarksText = document.getElementById('customHeadRemarks').value;
+            }
+
+            // Save settings
+            const settings = {
+                daysPresent: document.getElementById('daysPresent').value,
+                totalDays: document.getElementById('totalDays').value,
+                promotedTo: document.getElementById('promotedTo').value,
+                nextTermBegins: document.getElementById('nextTermBegins').value,
+                vacationDate: document.getElementById('vacationDate').value,
+                conduct: document.getElementById('conductSelect').value,
+                interest: document.getElementById('interestSelect').value,
+                teacherRemarks: teacherRemarksText,
+                headRemarks: headRemarksText
+            };
+            
+            localStorage.setItem('settings_' + student.id, JSON.stringify(settings));
+            showToast('All settings saved successfully! ✅');
+        }
+
+        function saveAllAndViewReport() {
+            saveAll();
+            setTimeout(function() {
+                window.location.href = 'report_card.html';
+            }, 500);
+        }
+
+        // ==================== HELPERS ====================
+        function getInterpretation(grade) {
+            const interpretations = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
+            return interpretations[grade] || '';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>

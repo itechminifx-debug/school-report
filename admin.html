@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | School Report Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #f0f4f8; min-height: 100vh; }
+        .navbar { background: linear-gradient(135deg, #0d1b3e, #1a2f5a); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .navbar .brand { font-size: 18px; font-weight: 700; }
+        .navbar a { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 25px; background: white; border-radius: 12px; padding: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 14px; border: none; background: transparent; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; color: #666; transition: all 0.3s; }
+        .tab.active { background: #1e3c72; color: white; }
+        .panel { display: none; background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .panel.active { display: block; }
+        .section-title { font-size: 20px; font-weight: 700; color: #1e3c72; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; color: #444; margin-bottom: 6px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; transition: all 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #1e3c72; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        .data-table th { background: #1e3c72; color: white; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        .data-table tr:hover td { background: #f8fafc; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: #1e3c72; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; padding: 6px 12px; font-size: 12px; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; margin: 2px; }
+        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #28a745; color: white; padding: 16px; border-radius: 12px; text-align: center; animation: slideUp 0.3s; z-index: 1000; display: none; }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .tabs { flex-wrap: wrap; } .tab { font-size: 12px; padding: 10px; } }
+    </style>
+    <script src="database.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">⚙️ ADMIN PANEL</div>
+        <a href="index.html">🔙 Portal Login</a>
+    </div>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('students')">👥 Students</button>
+            <button class="tab" onclick="switchTab('teachers')">👤 Teachers</button>
+            <button class="tab" onclick="switchTab('classes')">🏫 Classes</button>
+            <button class="tab" onclick="switchTab('summary')">📊 Summary</button>
+        </div>
+
+        <!-- STUDENTS PANEL -->
+        <div id="panel-students" class="panel active">
+            <div class="section-title">➕ Add New Student</div>
+            <div class="form-row">
+                <div class="form-group"><label>Student ID</label><input type="text" id="newStudentID" readonly placeholder="Auto-generated" style="background:#f0f0f0;"></div>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="newStudentName" placeholder="e.g., John Mensah"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Gender</label><select id="newStudentGender"><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                <div class="form-group"><label>Class *</label><select id="newStudentClass"><option value="">-- Select Class --</option><option value="KG 1">KG 1</option><option value="KG 2">KG 2</option><option value="Basic 1">Basic 1</option><option value="Basic 2">Basic 2</option><option value="Basic 3">Basic 3</option><option value="Basic 4">Basic 4</option><option value="Basic 5">Basic 5</option><option value="Basic 6">Basic 6</option><option value="JHS 1">JHS 1</option><option value="JHS 2">JHS 2</option><option value="JHS 3">JHS 3</option></select></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>House</label><select id="newStudentHouse"><option value="Red House">Red House</option><option value="Blue House">Blue House</option><option value="Green House">Green House</option><option value="Yellow House">Yellow House</option></select></div>
+                <div class="form-group"><label>&nbsp;</label><button class="btn btn-success" style="width:100%;" onclick="addStudent()">➕ Add Student</button></div>
+            </div>
+            <hr style="margin: 25px 0;">
+            <div class="section-title">📋 Student List</div>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>Class</th><th>House</th><th>Action</th></tr></thead>
+                    <tbody id="studentTableBody"><tr><td colspan="6" style="text-align:center;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TEACHERS PANEL -->
+        <div id="panel-teachers" class="panel">
+            <div class="section-title">➕ Add New Teacher</div>
+            <div class="form-row">
+                <div class="form-group"><label>Title</label><select id="newTeacherTitle"><option value="Mr.">Mr.</option><option value="Mrs.">Mrs.</option><option value="Ms.">Ms.</option><option value="Dr.">Dr.</option></select></div>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="newTeacherName" placeholder="e.g., Kofi Mensah"></div>
+            </div>
+            <div class="form-group"><label>Password</label><input type="text" id="newTeacherPassword" placeholder="Set a password (default: 1234)" value="1234"></div>
+            <button class="btn btn-success" onclick="addTeacher()">➕ Add Teacher</button>
+            <hr style="margin: 25px 0;">
+            <div class="section-title">📋 Teacher List</div>
+            <table class="data-table">
+                <thead><tr><th>#</th><th>Name</th><th>Password</th><th>Action</th></tr></thead>
+                <tbody id="teacherTableBody"><tr><td colspan="4" style="text-align:center;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- CLASSES PANEL -->
+        <div id="panel-classes" class="panel">
+            <div class="section-title">📊 Class Overview</div>
+            <table class="data-table">
+                <thead><tr><th>Class</th><th>Number of Students</th></tr></thead>
+                <tbody id="classSummaryBody"><tr><td colspan="2" style="text-align:center;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- SUMMARY PANEL -->
+        <div id="panel-summary" class="panel">
+            <div class="section-title">📊 System Summary</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #2e7d32;" id="totalStudents">0</div><div style="color: #555;">Total Students</div></div>
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #1565c0;" id="totalTeachers">0</div><div style="color: #555;">Total Teachers</div></div>
+                <div style="background: #fff3e0; padding: 20px; border-radius: 12px; text-align: center;"><div style="font-size: 36px; font-weight: bold; color: #e65100;">11</div><div style="color: #555;">Classes</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+<script>
+    // ==================== SHARED DATABASE ====================
+    var students = [];
+    var teachers = [];
+    var classLevels = ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'];
+
+    // Load data on startup
+    async function initData() {
+        var loaded = await Database.load();
+        if (!loaded) {
+            Database.loadLocal();
+        }
+        students = Database.getStudents();
+        teachers = Database.getTeachers();
+        refreshAllTables();
+    }
+
+    function refreshAllTables() {
+        generateStudentID();
+        loadStudentTable();
+        loadTeacherTable();
+        loadClassSummary();
+        loadSummary();
+    }
+
+    // ==================== INITIALIZATION ====================
+    window.onload = async function() {
+        await initData();
+    };
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+        event.target.classList.add('active');
+        document.getElementById('panel-' + tabName).classList.add('active');
+        if (tabName === 'summary') loadSummary();
+        if (tabName === 'classes') loadClassSummary();
+    }
+
+    // ==================== STUDENTS ====================
+    function generateStudentID() {
+        document.getElementById('newStudentID').value = 'STU' + String(students.length + 1).padStart(4, '0');
+    }
+
+    async function addStudent() {
+        var id = document.getElementById('newStudentID').value;
+        var name = document.getElementById('newStudentName').value.trim();
+        var gender = document.getElementById('newStudentGender').value;
+        var className = document.getElementById('newStudentClass').value;
+        var house = document.getElementById('newStudentHouse').value;
+
+        if (!name) { showToast('Please enter student name!', 'error'); return; }
+        if (!className) { showToast('Please select a class!', 'error'); return; }
+
+        await Database.addStudent({ id: id, name: name, gender: gender, class: className, house: house });
+        students = Database.getStudents();
+        document.getElementById('newStudentName').value = '';
+        refreshAllTables();
+        showToast('Student ' + name + ' added! ✅');
+    }
+
+    async function deleteStudent(id) {
+        if (confirm('Delete this student?')) {
+            await Database.deleteStudent(id);
+            students = Database.getStudents();
+            refreshAllTables();
+            showToast('Student deleted.');
+        }
+    }
+
+    function loadStudentTable() {
+        var tbody = document.getElementById('studentTableBody');
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#999;">No students yet.</td></tr>';
+            return;
+        }
+        var html = '';
+        students.forEach(function(s) {
+            html += '<tr><td><strong>' + s.id + '</strong></td><td>' + s.name + '</td><td>' + s.gender + '</td><td>' + s.class + '</td><td>' + (s.house || 'N/A') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteStudent(\'' + s.id + '\')">🗑 Delete</button></td></tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ==================== TEACHERS ====================
+    async function addTeacher() {
+        var title = document.getElementById('newTeacherTitle').value;
+        var name = document.getElementById('newTeacherName').value.trim();
+        var password = document.getElementById('newTeacherPassword').value || '1234';
+
+        if (!name) { showToast('Please enter teacher name!', 'error'); return; }
+
+        await Database.addTeacher({ title: title, name: name, password: password });
+        teachers = Database.getTeachers();
+        document.getElementById('newTeacherName').value = '';
+        loadTeacherTable();
+        showToast('Teacher ' + title + ' ' + name + ' added! ✅');
+    }
+
+    async function deleteTeacher(index) {
+        if (confirm('Delete this teacher?')) {
+            await Database.deleteTeacher(index);
+            teachers = Database.getTeachers();
+            loadTeacherTable();
+            showToast('Teacher deleted.');
+        }
+    }
+
+    function loadTeacherTable() {
+        var tbody = document.getElementById('teacherTableBody');
+        var html = '';
+        teachers.forEach(function(t, index) {
+            html += '<tr><td>' + (index + 1) + '</td><td>' + t.title + ' ' + t.name + '</td><td>' + (t.password || '1234') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteTeacher(' + index + ')">🗑 Delete</button></td></tr>';
+        });
+        tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:#999;">No teachers yet.</td></tr>';
+    }
+
+    // ==================== CLASS SUMMARY ====================
+    function loadClassSummary() {
+        var tbody = document.getElementById('classSummaryBody');
+        var html = '';
+        classLevels.forEach(function(cls) {
+            var count = students.filter(function(s) { return s.class === cls; }).length;
+            html += '<tr><td><strong>' + cls + '</strong></td><td>' + count + ' student(s)</td></tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ==================== SUMMARY ====================
+    function loadSummary() {
+        document.getElementById('totalStudents').textContent = students.length;
+        document.getElementById('totalTeachers').textContent = teachers.length;
+    }
+
+    function showToast(message, type) {
+        var toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        toast.style.background = type === 'error' ? '#dc3545' : '#28a745';
+        setTimeout(function() { toast.style.display = 'none'; }, 3000);
+    }
+</script>
+</body>
+</html>

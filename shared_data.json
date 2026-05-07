@@ -1,0 +1,10 @@
+{
+  "students": [],
+  "teachers": [
+    { "title": "Mr.", "name": "Mensah", "password": "1234" },
+    { "title": "Mrs.", "name": "Appiah", "password": "1234" },
+    { "title": "Mr.", "name": "Osei", "password": "1234" },
+    { "title": "Ms.", "name": "Asante", "password": "1234" },
+    { "title": "Mr.", "name": "Boadu", "password": "1234" }
+  ]
+}
