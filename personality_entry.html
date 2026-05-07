@@ -41,6 +41,7 @@
         .btn-secondary { background: #6c757d; }
 
         .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #28a745; color: white; padding: 16px; border-radius: 12px; text-align: center; z-index: 1000; display: none; animation: slideUp 0.3s; }
+        .custom-remark { margin-top: 8px; display: none; }
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         @media (max-width: 600px) {
@@ -69,9 +70,7 @@
         <!-- Personality Development -->
         <div class="card">
             <div class="section-title">🌟 Personality Development</div>
-            <div class="trait-grid" id="traitGrid">
-                <!-- Populated by JavaScript -->
-            </div>
+            <div class="trait-grid" id="traitGrid"></div>
         </div>
 
         <!-- Attendance & Promotion -->
@@ -155,16 +154,55 @@
             </div>
         </div>
 
-        <!-- Remarks -->
+        <!-- Teacher Remarks with Dropdown -->
         <div class="card">
-            <div class="section-title">💬 Remarks</div>
+            <div class="section-title">💬 Class Teacher's Remarks</div>
             <div class="form-group">
-                <label>Class Teacher's Remarks</label>
-                <textarea id="teacherRemarks" placeholder="Enter your remarks about the student...">A dedicated student who shows great enthusiasm for learning. Keep up the good work!</textarea>
+                <label>Select Pre-Written Remark</label>
+                <select id="teacherRemarkSelect" onchange="onTeacherRemarkChange()">
+                    <option value="">-- Choose a remark or type custom below --</option>
+                    <option value="An excellent student who consistently performs well in all areas. Keep up the great work!">⭐ Excellent Performance</option>
+                    <option value="A dedicated student who shows great enthusiasm for learning. Continue to work hard.">👍 Dedicated & Enthusiastic</option>
+                    <option value="Shows good understanding of subjects but needs to participate more in class activities.">📚 Good Understanding - Needs Participation</option>
+                    <option value="A well-behaved student who gets along well with peers and respects authority.">🤝 Well-Behaved & Respectful</option>
+                    <option value="Has shown improvement this term but needs to be more consistent with homework.">📈 Improving - Needs Consistency</option>
+                    <option value="A brilliant student with great potential. Needs to focus more on weaker subjects.">🌟 Brilliant - Focus on Weak Areas</option>
+                    <option value="Demonstrates good leadership skills and helps classmates willingly.">👑 Good Leadership Skills</option>
+                    <option value="Needs to improve concentration during lessons and complete assignments on time.">⚠️ Needs Improvement - Concentration</option>
+                    <option value="A very creative student who excels in arts and practical activities.">🎨 Creative & Practical</option>
+                    <option value="Has made remarkable progress this term. Very proud of this achievement.">🏆 Remarkable Progress</option>
+                    <option value="custom">✏️ Write Custom Remark...</option>
+                </select>
             </div>
+            <div class="form-group custom-remark" id="teacherCustomRemarkGroup">
+                <label>Custom Teacher's Remark</label>
+                <textarea id="teacherRemarks" placeholder="Write your own remark here...">A dedicated student who shows great enthusiasm for learning. Keep up the good work!</textarea>
+            </div>
+        </div>
+
+        <!-- Head Teacher Remarks with Dropdown -->
+        <div class="card">
+            <div class="section-title">💬 Head Teacher's Remarks</div>
             <div class="form-group">
-                <label>Head Teacher's Remarks</label>
-                <textarea id="headRemarks" placeholder="Enter head teacher's remarks...">Approved. Continue to work hard and maintain this performance.</textarea>
+                <label>Select Pre-Written Remark</label>
+                <select id="headRemarkSelect" onchange="onHeadRemarkChange()">
+                    <option value="">-- Choose a remark or type custom below --</option>
+                    <option value="Approved. Continue to work hard and maintain this excellent performance.">✅ Approved - Maintain Excellence</option>
+                    <option value="Well done! Your efforts are recognized. Strive for even greater heights.">👏 Well Done - Strive Higher</option>
+                    <option value="Good performance. Put in more effort next term to achieve excellence.">📈 Good - Push for Excellence</option>
+                    <option value="Satisfactory performance. There is room for improvement in all subjects.">📚 Satisfactory - Room for Growth</option>
+                    <option value="Excellent results! You are a pride to this school. Keep shining!">🌟 Excellent - Pride of the School</option>
+                    <option value="Promoted to the next class. Work harder to improve your overall performance.">📋 Promoted - Work Harder</option>
+                    <option value="Your conduct is commendable. Maintain this standard throughout your education.">🤝 Commendable Conduct</option>
+                    <option value="Parents are encouraged to support this student to reach full potential.">👨‍👩‍👧 Parental Support Needed</option>
+                    <option value="A very promising student. Continue on this path of excellence.">💎 Promising Student</option>
+                    <option value="See me for academic counseling before next term begins.">📞 Academic Counseling Required</option>
+                    <option value="custom">✏️ Write Custom Remark...</option>
+                </select>
+            </div>
+            <div class="form-group custom-remark" id="headCustomRemarkGroup">
+                <label>Custom Head Teacher's Remark</label>
+                <textarea id="headRemarks" placeholder="Write your own remark here...">Approved. Continue to work hard and maintain this performance.</textarea>
             </div>
         </div>
 
@@ -197,14 +235,16 @@
                 return;
             }
 
-            // Display student info
             document.getElementById('bannerName').textContent = student.name;
             document.getElementById('bannerID').textContent = student.id;
             document.getElementById('bannerClass').textContent = student.class;
 
-            // Load trait grid and saved settings
             loadTraitGrid();
             loadSavedSettings();
+            
+            // Show custom remark boxes on load if needed
+            onTeacherRemarkChange();
+            onHeadRemarkChange();
         };
 
         // ==================== TRAIT GRID ====================
@@ -226,6 +266,37 @@
             });
 
             grid.innerHTML = html;
+        }
+
+        // ==================== REMARK DROPDOWNS ====================
+        function onTeacherRemarkChange() {
+            var select = document.getElementById('teacherRemarkSelect');
+            var customGroup = document.getElementById('teacherCustomRemarkGroup');
+            var textarea = document.getElementById('teacherRemarks');
+
+            if (select.value === 'custom') {
+                customGroup.style.display = 'block';
+            } else if (select.value) {
+                customGroup.style.display = 'none';
+                textarea.value = select.value;
+            } else {
+                customGroup.style.display = 'block';
+            }
+        }
+
+        function onHeadRemarkChange() {
+            var select = document.getElementById('headRemarkSelect');
+            var customGroup = document.getElementById('headCustomRemarkGroup');
+            var textarea = document.getElementById('headRemarks');
+
+            if (select.value === 'custom') {
+                customGroup.style.display = 'block';
+            } else if (select.value) {
+                customGroup.style.display = 'none';
+                textarea.value = select.value;
+            } else {
+                customGroup.style.display = 'block';
+            }
         }
 
         // ==================== LOAD SAVED SETTINGS ====================
@@ -258,8 +329,8 @@
                 document.getElementById('vacationDuration').value = data.vacationDuration || '';
                 document.getElementById('conductSelect').value = data.conduct || 'Very Good';
                 document.getElementById('interestSelect').value = data.interest || 'Excellent';
-                document.getElementById('teacherRemarks').value = data.teacherRemarks || '';
-                document.getElementById('headRemarks').value = data.headRemarks || '';
+                document.getElementById('teacherRemarks').value = data.teacherRemarks || 'A dedicated student who shows great enthusiasm for learning. Keep up the good work!';
+                document.getElementById('headRemarks').value = data.headRemarks || 'Approved. Continue to work hard and maintain this performance.';
             }
         }
 
@@ -280,7 +351,7 @@
                 localStorage.setItem(key, JSON.stringify({ grade: grade }));
             });
 
-            // Save all settings including vacation dates
+            // Save all settings
             var settings = {
                 daysPresent: document.getElementById('daysPresent').value,
                 totalDays: document.getElementById('totalDays').value,
