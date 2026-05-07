@@ -7,30 +7,53 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #f0f4f8; min-height: 100vh; }
+        
+        /* Navbar */
         .navbar { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .navbar .brand { font-size: 18px; font-weight: 700; }
         .navbar .user-info { font-size: 14px; opacity: 0.9; }
         .navbar .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .navbar a { color: white; text-decoration: none; font-size: 13px; margin-left: 10px; }
+        
+        /* Container */
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        
+        /* Info Banner */
         .info-banner { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #2a5298; }
         .info-banner h3 { color: #1e3c72; margin-bottom: 8px; }
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 10px; }
         .info-item { background: #f8fafc; padding: 10px; border-radius: 8px; }
         .info-item .label { font-size: 11px; color: #888; text-transform: uppercase; }
         .info-item .value { font-size: 15px; font-weight: 600; color: #333; }
-        .section-title { font-size: 18px; font-weight: 700; color: #1e3c72; margin: 25px 0 15px; }
+        
+        /* Cards */
         .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .section-title { font-size: 18px; font-weight: 700; color: #1e3c72; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Form */
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; font-weight: 600; color: #444; margin-bottom: 6px; font-size: 14px; }
-        .form-group select, .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; background: #fafafa; }
+        .form-group select, .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; background: #fafafa; transition: all 0.3s; }
         .form-group select:focus, .form-group input:focus { outline: none; border-color: #1e3c72; background: white; }
-        .student-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; max-height: 400px; overflow-y: auto; }
+        
+        /* Student Grid */
+        .student-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; max-height: 400px; overflow-y: auto; padding: 4px; }
         .student-card { background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; text-align: center; }
         .student-card:hover { border-color: #1e3c72; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .student-card.selected { border-color: #2a5298; background: #e8f0fe; }
         .student-avatar { width: 50px; height: 50px; background: #e0e7ff; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #1e3c72; }
         .student-name { font-weight: 600; font-size: 15px; color: #333; }
         .student-id { font-size: 12px; color: #888; margin-top: 4px; }
+        
+        /* Rankings Table */
+        .rankings-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .rankings-table th { background: #1e3c72; color: white; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
+        .rankings-table td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+        .rankings-table tr:hover td { background: #f8fafc; }
+        .rankings-table .highlight { background: #e8f0fe; font-weight: 600; }
+        .rankings-table .medal { font-size: 16px; }
+        
+        /* Buttons */
         .btn-group { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
         .btn { flex: 1; min-width: 150px; padding: 16px 20px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; }
         .btn-primary { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; }
@@ -38,22 +61,41 @@
         .btn-success { background: #28a745; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
         .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        /* Empty State */
         .empty-state { text-align: center; padding: 40px; color: #999; }
         .empty-state .icon { font-size: 48px; margin-bottom: 15px; }
-        @media (max-width: 600px) { .navbar .brand { font-size: 16px; } .student-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } .btn { font-size: 14px; padding: 14px; } }
+        
+        /* Tabs */
+        .tab-row { display: flex; gap: 5px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border: none; background: #e0e0e0; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.3s; }
+        .tab-btn.active { background: #1e3c72; color: white; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar .brand { font-size: 16px; }
+            .student-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .btn { font-size: 14px; padding: 14px; }
+            .info-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
-    <script src="database.js"></script>
 </head>
 <body>
+
+    <!-- ==================== NAVBAR ==================== -->
     <div class="navbar">
         <div class="brand">📚 LIVING SPRING ADVENTIST ACADEMY</div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <span class="user-info" id="teacherDisplay">Teacher</span>
+            <a href="admin.html">⚙️ Admin</a>
             <button class="btn-logout" onclick="logout()">🚪 Logout</button>
         </div>
     </div>
 
+    <!-- ==================== MAIN CONTAINER ==================== -->
     <div class="container">
+        
+        <!-- Session Info -->
         <div class="info-banner">
             <h3>📋 Current Session</h3>
             <div class="info-grid">
@@ -64,6 +106,7 @@
             </div>
         </div>
 
+        <!-- Class Selection -->
         <div class="card">
             <div class="section-title">🏫 Select Class</div>
             <div class="form-group">
@@ -74,17 +117,45 @@
             </div>
         </div>
 
+        <!-- Tabs: Students | Rankings -->
+        <div class="tab-row" id="tabRow" style="display: none;">
+            <button class="tab-btn active" onclick="showTab('students')">👥 Students</button>
+            <button class="tab-btn" onclick="showTab('rankings')">🏆 Class Rankings</button>
+        </div>
+
+        <!-- Student Selection -->
         <div class="card" id="studentSection" style="display: none;">
             <div class="section-title">👨‍🎓 Select Student</div>
             <div class="form-group">
-                <label>Search Student</label>
-                <input type="text" id="studentSearch" placeholder="🔍 Type student name..." style="width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:10px; font-size:15px;" onkeyup="filterStudents()">
+                <input type="text" id="studentSearch" placeholder="🔍 Search student by name..." style="width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:10px; font-size:15px;" onkeyup="filterStudents()">
             </div>
             <div class="student-list" id="studentList">
                 <div class="empty-state"><div class="icon">📋</div><p>Select a class to view students</p></div>
             </div>
         </div>
 
+        <!-- Class Rankings -->
+        <div class="card" id="rankingSection" style="display: none;">
+            <div class="section-title">🏆 Class Rankings — <span id="rankingClassName"></span></div>
+            <div style="overflow-x: auto;">
+                <table class="rankings-table">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Student Name</th>
+                            <th>Average Score</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingsTableBody">
+                        <tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">Enter scores to see class rankings</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
         <div class="btn-group">
             <button class="btn btn-primary" id="btnEnterScores" disabled onclick="enterScores()">📝 Enter Scores</button>
             <button class="btn btn-success" id="btnViewReport" disabled onclick="viewReport()">📊 View Report Card</button>
@@ -92,29 +163,13 @@
         </div>
     </div>
 
+    <!-- ==================== SCRIPTS ==================== -->
     <script>
-        // ==================== LOAD STUDENTS FROM LOCAL STORAGE ====================
+        // ==================== DATA ====================
         var studentsDatabase = [];
-
-        function loadStudentsFromLocalStorage() {
-            var savedStudents = localStorage.getItem('admin_students');
-            if (savedStudents) {
-                studentsDatabase = JSON.parse(savedStudents);
-            } else {
-                // Default fallback
-                studentsDatabase = [
-                    { id: 'STU0001', name: 'John Mensah', gender: 'Male', class: 'KG 1', house: 'Red House' },
-                    { id: 'STU0002', name: 'Ama Serwaa', gender: 'Female', class: 'KG 1', house: 'Blue House' },
-                    { id: 'STU0003', name: 'Kofi Asante', gender: 'Male', class: 'KG 2', house: 'Green House' },
-                    { id: 'STU0004', name: 'Efua Parker', gender: 'Female', class: 'Basic 1', house: 'Yellow House' },
-                    { id: 'STU0005', name: 'Yaw Boakye', gender: 'Male', class: 'JHS 2', house: 'Red House' }
-                ];
-                localStorage.setItem('admin_students', JSON.stringify(studentsDatabase));
-            }
-        }
-
         var selectedClass = '';
         var selectedStudent = null;
+        var currentTab = 'students';
 
         var classesByCategory = {
             'KG': ['KG 1', 'KG 2'],
@@ -130,6 +185,24 @@
             'JHS': 'JHS (JHS 1-3)'
         };
 
+        // ==================== LOAD STUDENTS ====================
+        function loadStudentsFromLocalStorage() {
+            var savedStudents = localStorage.getItem('admin_students');
+            if (savedStudents) {
+                studentsDatabase = JSON.parse(savedStudents);
+            } else {
+                studentsDatabase = [
+                    { id: 'STU0001', name: 'John Mensah', gender: 'Male', class: 'KG 1', house: 'Red House' },
+                    { id: 'STU0002', name: 'Ama Serwaa', gender: 'Female', class: 'KG 1', house: 'Blue House' },
+                    { id: 'STU0003', name: 'Kofi Asante', gender: 'Male', class: 'KG 2', house: 'Green House' },
+                    { id: 'STU0004', name: 'Efua Parker', gender: 'Female', class: 'Basic 1', house: 'Yellow House' },
+                    { id: 'STU0005', name: 'Yaw Boakye', gender: 'Male', class: 'JHS 2', house: 'Red House' }
+                ];
+                localStorage.setItem('admin_students', JSON.stringify(studentsDatabase));
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
         window.onload = function() {
             var teacherName = sessionStorage.getItem('teacherName');
             var category = sessionStorage.getItem('category');
@@ -147,11 +220,11 @@
             document.getElementById('displayTerm').textContent = term;
             document.getElementById('displayYear').textContent = year;
 
-            // LOAD STUDENTS FROM LOCAL STORAGE
             loadStudentsFromLocalStorage();
             populateClassDropdown();
         };
 
+        // ==================== CLASS DROPDOWN ====================
         function populateClassDropdown() {
             var category = sessionStorage.getItem('category');
             var classes = classesByCategory[category] || [];
@@ -165,34 +238,61 @@
             });
         }
 
+        // ==================== TAB SWITCHING ====================
+        function showTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            event.target.classList.add('active');
+
+            if (tabName === 'students') {
+                document.getElementById('studentSection').style.display = 'block';
+                document.getElementById('rankingSection').style.display = 'none';
+            } else {
+                document.getElementById('studentSection').style.display = 'none';
+                document.getElementById('rankingSection').style.display = 'block';
+                showClassRankings(selectedClass);
+            }
+        }
+
+        // ==================== CLASS SELECTION ====================
         function onClassSelected() {
             selectedClass = document.getElementById('classSelect').value;
             selectedStudent = null;
+
             if (selectedClass) {
                 document.getElementById('displayClass').textContent = selectedClass;
+                document.getElementById('tabRow').style.display = 'flex';
                 document.getElementById('studentSection').style.display = 'block';
+                document.getElementById('rankingClassName').textContent = selectedClass;
                 displayStudents(selectedClass);
+                showClassRankings(selectedClass);
             } else {
                 document.getElementById('displayClass').textContent = '-';
+                document.getElementById('tabRow').style.display = 'none';
                 document.getElementById('studentSection').style.display = 'none';
+                document.getElementById('rankingSection').style.display = 'none';
             }
             updateButtons();
         }
 
+        // ==================== DISPLAY STUDENTS ====================
         function displayStudents(filterClass) {
             var students = studentsDatabase.filter(function(s) { return s.class === filterClass; });
             var listDiv = document.getElementById('studentList');
+
             if (students.length === 0) {
                 listDiv.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No students found in ' + filterClass + '</p></div>';
                 return;
             }
+
             var html = '';
             students.forEach(function(student) {
                 var isSelected = selectedStudent && selectedStudent.id === student.id;
-                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')" id="card_' + student.id + '">' +
-                    '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>' +
-                    '<div class="student-name">' + student.name + '</div>' +
-                    '<div class="student-id">' + student.id + ' | ' + (student.house || 'N/A') + '</div></div>';
+                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')" id="card_' + student.id + '">';
+                html += '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>';
+                html += '<div class="student-name">' + student.name + '</div>';
+                html += '<div class="student-id">' + student.id + ' | ' + (student.house || 'N/A') + '</div>';
+                html += '</div>';
             });
             listDiv.innerHTML = html;
         }
@@ -218,14 +318,142 @@
             var html = '';
             filtered.forEach(function(student) {
                 var isSelected = selectedStudent && selectedStudent.id === student.id;
-                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')">' +
-                    '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>' +
-                    '<div class="student-name">' + student.name + '</div>' +
-                    '<div class="student-id">' + student.id + '</div></div>';
+                html += '<div class="student-card ' + (isSelected ? 'selected' : '') + '" onclick="selectStudent(\'' + student.id + '\')">';
+                html += '<div class="student-avatar">' + (student.gender === 'Male' ? '👦' : '👧') + '</div>';
+                html += '<div class="student-name">' + student.name + '</div>';
+                html += '<div class="student-id">' + student.id + '</div>';
+                html += '</div>';
             });
             listDiv.innerHTML = html || '<div class="empty-state"><div class="icon">🔍</div><p>No matching students</p></div>';
         }
 
+        // ==================== CLASS RANKINGS ====================
+        function showClassRankings(className) {
+            if (!className) return;
+
+            document.getElementById('rankingClassName').textContent = className;
+            document.getElementById('rankingSection').style.display = 'block';
+
+            var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
+            var classStudents = allStudents.filter(function(s) { return s.class === className; });
+
+            var rankings = [];
+
+            classStudents.forEach(function(s) {
+                var scores = getStudentScores(s.id);
+                var average = calculateAverage(scores);
+                if (average > 0) {
+                    rankings.push({
+                        id: s.id,
+                        name: s.name,
+                        average: average,
+                        grade: getGrade(average)
+                    });
+                }
+            });
+
+            // Sort by average (highest first)
+            rankings.sort(function(a, b) { return b.average - a.average; });
+
+            var tbody = document.getElementById('rankingsTableBody');
+
+            if (rankings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">No scores entered yet. Enter scores to see rankings.</td></tr>';
+                return;
+            }
+
+            var html = '';
+            rankings.forEach(function(r, index) {
+                var position = index + 1;
+                var medal = '';
+                if (position === 1) medal = '🥇';
+                else if (position === 2) medal = '🥈';
+                else if (position === 3) medal = '🥉';
+
+                var isSelected = selectedStudent && selectedStudent.id === r.id;
+                var rowClass = isSelected ? 'highlight' : '';
+
+                html += '<tr class="' + rowClass + '" style="cursor:pointer;" onclick="selectStudentFromRanking(\'' + r.id + '\')">';
+                html += '<td><span class="medal">' + medal + '</span> ' + getPositionSuffix(position) + '</td>';
+                html += '<td>' + r.name + (isSelected ? ' ⭐' : '') + '</td>';
+                html += '<td><strong>' + r.average.toFixed(1) + '%</strong></td>';
+                html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-weight:600;font-size:12px;' + getGradeBg(r.grade) + '">' + r.grade + '</span></td>';
+                html += '<td style="font-size:12px;">' + getStatus(position, rankings.length) + '</td>';
+                html += '</tr>';
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function getStudentScores(studentId) {
+            var scores = [];
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key.indexOf('score_' + studentId + '_') === 0) {
+                    try {
+                        var data = JSON.parse(localStorage.getItem(key));
+                        if (data && data.total > 0) {
+                            scores.push(data.total);
+                        }
+                    } catch (e) {}
+                }
+            }
+            return scores;
+        }
+
+        function calculateAverage(scores) {
+            if (scores.length === 0) return 0;
+            var sum = scores.reduce(function(a, b) { return a + b; }, 0);
+            return sum / scores.length;
+        }
+
+        function getGrade(score) {
+            if (score >= 80) return 'A';
+            if (score >= 70) return 'B';
+            if (score >= 60) return 'C';
+            if (score >= 50) return 'D';
+            if (score >= 40) return 'E';
+            return 'F';
+        }
+
+        function getGradeBg(grade) {
+            var colors = {
+                'A': 'background:#d4edda;color:#155724;',
+                'B': 'background:#cce5ff;color:#004085;',
+                'C': 'background:#fff3cd;color:#856404;',
+                'D': 'background:#ffeeba;color:#856404;',
+                'E': 'background:#f8d7da;color:#721c24;',
+                'F': 'background:#f5c6cb;color:#721c24;'
+            };
+            return colors[grade] || '';
+        }
+
+        function getPositionSuffix(pos) {
+            if (pos === 1) return '1st';
+            if (pos === 2) return '2nd';
+            if (pos === 3) return '3rd';
+            return pos + 'th';
+        }
+
+        function getStatus(pos, total) {
+            var percent = (pos / total) * 100;
+            if (percent <= 20) return '🌟 Top Performer';
+            if (percent <= 50) return '👍 Above Average';
+            if (percent <= 80) return '📚 Average';
+            return '💪 Needs Improvement';
+        }
+
+        function selectStudentFromRanking(studentId) {
+            showTab('students');
+            selectStudent(studentId);
+            // Scroll to the selected student card
+            setTimeout(function() {
+                var card = document.getElementById('card_' + studentId);
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // ==================== BUTTONS ====================
         function updateButtons() {
             document.getElementById('btnEnterScores').disabled = !selectedStudent;
             document.getElementById('btnViewReport').disabled = !selectedStudent;
@@ -248,5 +476,6 @@
         function goBack() { window.location.href = 'index.html'; }
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
     </script>
+
 </body>
 </html>
