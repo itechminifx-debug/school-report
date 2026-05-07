@@ -23,15 +23,12 @@
         .login-footer a { color: #1e3c72; text-decoration: none; }
         .error-msg { color: #dc3545; font-size: 13px; margin-top: 5px; display: none; }
     </style>
-    <script src="database.js"></script>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <div class="logo">
-         <img src="school_logo.png" alt="School Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-            </div>
-            <h1>LIVING SPRING ADVENTIST ACADEMY</h1>
+            <div class="logo" id="schoolBadge">📚</div>
+            <h1 id="schoolNameDisplay">SCHOOL REPORT PORTAL</h1>
             <p>Report Card Management System</p>
         </div>
         <div class="login-body">
@@ -71,7 +68,7 @@
             <button class="btn-login" onclick="login()">🚀 Enter Portal</button>
         </div>
         <div class="login-footer">
-            © 2025 iTech Systems Solutions 
+            © 2025 iTech Systems Solutions | <a href="admin.html">⚙️ Admin Panel</a>
         </div>
     </div>
 
@@ -94,56 +91,68 @@
                 select.innerHTML += '<option value="Mr. Osei">Mr. Osei</option>';
                 select.innerHTML += '<option value="Ms. Asante">Ms. Asante</option>';
                 select.innerHTML += '<option value="Mr. Boadu">Mr. Boadu</option>';
-                // Save defaults to localStorage
                 var defaultTeachers = [
-                    {title: 'Mr.', name: 'Mensah'}, {title: 'Mrs.', name: 'Appiah'},
-                    {title: 'Mr.', name: 'Osei'}, {title: 'Ms.', name: 'Asante'}, {title: 'Mr.', name: 'Boadu'}
+                    {title: 'Mr.', name: 'Mensah', password: '1234'},
+                    {title: 'Mrs.', name: 'Appiah', password: '1234'},
+                    {title: 'Mr.', name: 'Osei', password: '1234'},
+                    {title: 'Ms.', name: 'Asante', password: '1234'},
+                    {title: 'Mr.', name: 'Boadu', password: '1234'}
                 ];
                 localStorage.setItem('admin_teachers', JSON.stringify(defaultTeachers));
             }
         }
 
-        window.onload = function() { loadTeachers(); };
+        // Load school branding
+        function loadSchoolBranding() {
+            var logo = localStorage.getItem('school_logo');
+            var name = localStorage.getItem('school_name');
+            if (logo) document.getElementById('schoolBadge').innerHTML = '<img src="' + logo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
+            if (name) document.getElementById('schoolNameDisplay').textContent = name.toUpperCase();
+        }
+
+        window.onload = function() { 
+            loadTeachers(); 
+            loadSchoolBranding();
+        };
 
         function login() {
-    var teacher = document.getElementById('teacherSelect').value;
-    var password = document.getElementById('passwordInput').value;
-    var category = document.getElementById('categorySelect').value;
-    var term = document.getElementById('termSelect').value;
-    var year = document.getElementById('yearInput').value;
+            var teacher = document.getElementById('teacherSelect').value;
+            var password = document.getElementById('passwordInput').value;
+            var category = document.getElementById('categorySelect').value;
+            var term = document.getElementById('termSelect').value;
+            var year = document.getElementById('yearInput').value;
 
-    document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
 
-    if (!teacher) { alert('Please select your name!'); return; }
-    if (!password) { alert('Please enter your password!'); return; }
-    if (!category) { alert('Please select a category!'); return; }
+            if (!teacher) { alert('Please select your name!'); return; }
+            if (!password) { alert('Please enter your password!'); return; }
+            if (!category) { alert('Please select a category!'); return; }
 
-    // Check password from admin_teachers
-    var savedTeachers = localStorage.getItem('admin_teachers');
-    var teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
-    var foundTeacher = null;
-    for (var i = 0; i < teachers.length; i++) {
-        if ((teachers[i].title + ' ' + teachers[i].name) === teacher) {
-            foundTeacher = teachers[i];
-            break;
+            var savedTeachers = localStorage.getItem('admin_teachers');
+            var teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
+            var foundTeacher = null;
+            for (var i = 0; i < teachers.length; i++) {
+                if ((teachers[i].title + ' ' + teachers[i].name) === teacher) {
+                    foundTeacher = teachers[i];
+                    break;
+                }
+            }
+
+            var validPassword = foundTeacher ? (foundTeacher.password || '1234') : '1234';
+
+            if (password !== validPassword) {
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
+
+            // ✅ SAVE TO LOCAL STORAGE (PERSISTS AFTER BROWSER CLOSE)
+            localStorage.setItem('currentTeacherName', teacher);
+            localStorage.setItem('currentCategory', category);
+            localStorage.setItem('currentTerm', term);
+            localStorage.setItem('currentAcademicYear', year);
+
+            window.location.href = 'dashboard.html';
         }
-    }
-
-    var validPassword = foundTeacher ? (foundTeacher.password || '1234') : '1234';
-
-    if (password !== validPassword) {
-        document.getElementById('passwordError').style.display = 'block';
-        return;
-    }
-
-    // ✅ CHANGE: Save to LOCAL STORAGE instead of sessionStorage
-    localStorage.setItem('currentTeacherName', teacher);
-    localStorage.setItem('currentCategory', category);
-    localStorage.setItem('currentTerm', term);
-    localStorage.setItem('currentAcademicYear', year);
-
-    window.location.href = 'dashboard.html';
-}
     </script>
 </body>
 </html>
