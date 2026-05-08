@@ -3,217 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Card | iTech Systems Solutions</title>
+    <title>Report Card | School Report Portal</title>
     <style>
-        :root {
-            --primary: #1a365d;
-            --primary-light: #2c5282;
-            --accent: #3182ce;
-            --gold: #d69e2e;
-            --silver: #a0aec0;
-            --bronze: #c05621;
-            --bg: #f7fafc;
-            --card: #ffffff;
-            --text: #2d3748;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --success: #38a169;
-            --warning: #d69e2e;
-            --danger: #e53e3e;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%);
-            min-height: 100vh; padding: 20px;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        /* Action Bar */
-        .action-bar {
-            max-width: 850px; margin: 0 auto 20px; display: flex; gap: 10px; flex-wrap: wrap;
-            padding: 14px 18px; background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        .btn {
-            padding: 11px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all 0.25s; color: white; display: flex; align-items: center; gap: 6px;
-            text-decoration: none;
-        }
+        :root { --primary: #1a365d; --primary-light: #2c5282; --accent: #3182ce; --gold: #d69e2e; --silver: #a0aec0; --bronze: #c05621; --bg: #f7fafc; --card: #ffffff; --text: #2d3748; --text-light: #718096; --border: #e2e8f0; --success: #38a169; --warning: #d69e2e; --danger: #e53e3e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%); min-height: 100vh; padding: 20px; }
+        
+        .action-bar { max-width: 850px; margin: 0 auto 20px; display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 18px; background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .btn { padding: 11px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; color: white; display: flex; align-items: center; gap: 6px; text-decoration: none; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
-        .btn-print { background: #2d3748; }
-        .btn-pdf { background: #e53e3e; }
-        .btn-share { background: #25D366; }
-        .btn-edit { background: #ed8936; }
-        .btn-back { background: #718096; }
-
-        /* Report Card */
-        .report-card {
-            max-width: 850px; margin: 0 auto; background: white; border-radius: 8px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.12); overflow: hidden;
-        }
-
-        /* Header / Cover */
-        .report-cover {
-            background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #1a365d 100%);
-            padding: 35px 30px; text-align: center; position: relative; overflow: hidden;
-        }
-        .report-cover::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 18px 18px; pointer-events: none;
-        }
-        .school-badge {
-            width: 85px; height: 85px; background: white; border-radius: 50%;
-            margin: 0 auto 14px; display: flex; align-items: center; justify-content: center;
-            font-size: 38px; color: var(--primary); font-weight: bold; overflow: hidden;
-            position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .btn-print { background: #2d3748; } .btn-pdf { background: #e53e3e; } .btn-share { background: #25D366; } .btn-edit { background: #ed8936; } .btn-back { background: #718096; }
+        
+        .report-card { max-width: 850px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.12); overflow: hidden; }
+        .report-cover { background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #1a365d 100%); padding: 35px 30px; text-align: center; position: relative; overflow: hidden; }
+        .report-cover::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 18px 18px; pointer-events: none; }
+        .school-badge { width: 85px; height: 85px; background: white; border-radius: 50%; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 38px; color: var(--primary); font-weight: bold; overflow: hidden; position: relative; z-index: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .school-badge img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         .school-name { font-size: 22px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 2px; position: relative; z-index: 1; }
         .report-subtitle { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; letter-spacing: 3px; text-transform: uppercase; position: relative; z-index: 1; }
         .school-meta { font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 8px; position: relative; z-index: 1; }
-
-        /* Student Info Strip */
-        .student-strip {
-            background: #f8fafc; padding: 18px 30px; border-bottom: 2px solid var(--border);
-            display: flex; flex-wrap: wrap; justify-content: space-between; font-size: 13px;
-        }
+        
+        .student-strip { background: #f8fafc; padding: 18px 30px; border-bottom: 2px solid var(--border); display: flex; flex-wrap: wrap; justify-content: space-between; font-size: 13px; }
         .student-strip .info-group { display: flex; gap: 25px; flex-wrap: wrap; }
-        .student-strip .info-item { color: var(--text-light); }
-        .student-strip .info-item strong { color: var(--text); font-weight: 600; }
-
-        /* Body */
+        .student-strip .info-item { color: var(--text-light); } .student-strip .info-item strong { color: var(--text); font-weight: 600; }
+        
         .report-body { padding: 25px 30px; }
-
-        .section-header {
-            display: flex; align-items: center; gap: 10px; margin: 20px 0 12px;
-            padding-bottom: 10px; border-bottom: 2px solid var(--primary);
-        }
-        .section-icon { font-size: 18px; }
-        .section-title {
-            font-size: 14px; font-weight: 700; color: var(--primary);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* Subjects Table */
+        .section-header { display: flex; align-items: center; gap: 10px; margin: 20px 0 12px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .section-icon { font-size: 18px; } .section-title { font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        
         .subjects-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 15px 0; }
-        .subjects-table thead th {
-            background: var(--primary); color: white; padding: 10px 6px;
-            font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; text-align: center;
-        }
-        .subjects-table tbody td {
-            padding: 9px 6px; border-bottom: 1px solid var(--border); text-align: center;
-        }
-        .subjects-table tbody tr:hover td { background: #f8fafc; }
+        .subjects-table thead th { background: var(--primary); color: white; padding: 10px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; text-align: center; }
+        .subjects-table tbody td { padding: 9px 6px; border-bottom: 1px solid var(--border); text-align: center; }
         .subjects-table .sub-name { text-align: left; font-weight: 600; color: var(--text); }
-
-        .grade-pill {
-            display: inline-block; padding: 3px 10px; border-radius: 20px;
-            font-weight: 700; font-size: 11px; min-width: 32px; text-align: center;
-        }
-        .g-A { background: #c6f6d5; color: #22543d; }
-        .g-B { background: #bee3f8; color: #2a4365; }
-        .g-C { background: #fefcbf; color: #744210; }
-        .g-D { background: #fed7d7; color: #822727; }
-        .g-E { background: #fbb6ce; color: #702459; }
-        .g-F { background: #fc8181; color: #742a2a; }
-
-        /* Summary Box */
-        .summary-box {
-            background: linear-gradient(135deg, #1a365d, #2c5282);
-            color: white; padding: 22px 25px; border-radius: 10px;
-            text-align: center; margin: 25px 0;
-        }
+        .grade-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 11px; min-width: 32px; text-align: center; }
+        .g-A { background: #c6f6d5; color: #22543d; } .g-B { background: #bee3f8; color: #2a4365; } .g-C { background: #fefcbf; color: #744210; } .g-D { background: #fed7d7; color: #822727; } .g-E { background: #fbb6ce; color: #702459; } .g-F { background: #fc8181; color: #742a2a; }
+        
+        .summary-box { background: linear-gradient(135deg, #1a365d, #2c5282); color: white; padding: 22px 25px; border-radius: 10px; text-align: center; margin: 25px 0; }
         .big-score { font-size: 44px; font-weight: 700; line-height: 1; }
         .summary-label { font-size: 13px; opacity: 0.85; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .ranking-section {
-            margin-top: 16px; padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.25);
-        }
+        .ranking-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.25); }
         .ranking-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
         .ranking-pos { font-size: 26px; font-weight: 700; margin: 4px 0; }
         .ranking-detail { font-size: 12px; opacity: 0.8; }
-
-        .top5-table {
-            width: 100%; color: white; font-size: 12px; margin-top: 12px;
-            text-align: left; border-collapse: collapse;
-        }
-        .top5-table th {
-            padding: 5px 8px; font-size: 9px; text-transform: uppercase;
-            opacity: 0.7; border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .top5-table td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .top5-table .hl { background: rgba(255,255,255,0.12); font-weight: 600; }
-
-        /* Personality Grid */
-        .personality-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-            gap: 8px; margin: 10px 0;
-        }
-        .trait-card {
-            background: #f8fafc; padding: 10px 14px; border-radius: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; border: 1px solid var(--border);
-        }
+        
+        .personality-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin: 10px 0; }
+        .trait-card { background: #f8fafc; padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; border: 1px solid var(--border); }
         .trait-name { color: var(--text); font-weight: 500; }
-
-        /* Attendance */
-        .info-row {
-            display: flex; gap: 25px; flex-wrap: wrap; font-size: 13px;
-            padding: 12px 16px; background: #f8fafc; border-radius: 8px; margin: 10px 0;
-        }
-        .info-row .label { color: var(--text-light); }
-        .info-row .val { color: var(--text); font-weight: 600; margin-left: 4px; }
-
-        /* Remarks */
-        .remarks-card {
-            border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px;
-            margin-bottom: 10px; font-size: 13px; line-height: 1.6; color: var(--text);
-            background: #fafafa;
-        }
+        
+        .info-row { display: flex; gap: 25px; flex-wrap: wrap; font-size: 13px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; margin: 10px 0; }
+        .info-row .label { color: var(--text-light); } .info-row .val { color: var(--text); font-weight: 600; margin-left: 4px; }
+        
+        .remarks-card { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; color: var(--text); background: #fafafa; }
         .remarks-card strong { color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Signatures */
-        .signatures {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;
-            margin-top: 35px; text-align: center;
-        }
+        
+        .signatures { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-top: 35px; text-align: center; }
         .sig-line { border-top: 1px solid #555; padding-top: 8px; font-size: 11px; color: var(--text-light); }
-
-        /* Footer */
-        .report-footer {
-            background: #f0f0f0; padding: 12px 30px; text-align: center;
-            font-size: 10px; color: #999; border-top: 1px solid #ddd;
-        }
-
-        /* Print */
-        @media print {
-            body { background: white; padding: 0; }
-            .action-bar { display: none !important; }
-            .report-card { box-shadow: none; border-radius: 0; max-width: 100%; }
-            .report-cover { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .subjects-table thead th { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .summary-box { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .grade-pill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
-
-        @media (max-width: 650px) {
-            .report-body { padding: 15px; }
-            .student-strip { padding: 12px 15px; font-size: 11px; }
-            .student-strip .info-group { gap: 12px; }
-            .subjects-table { font-size: 10px; }
-            .subjects-table thead th { font-size: 8px; padding: 6px 3px; }
-            .subjects-table tbody td { padding: 6px 3px; }
-            .signatures { grid-template-columns: 1fr; gap: 15px; }
-            .school-name { font-size: 17px; }
-        }
+        
+        .report-footer { background: #f0f0f0; padding: 12px 30px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #ddd; }
+        
+        @media print { body { background: white; padding: 0; } .action-bar { display: none !important; } .report-card { box-shadow: none; border-radius: 0; max-width: 100%; } .report-cover { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .subjects-table thead th { background: #1a365d !important; } .summary-box { background: #1a365d !important; } .grade-pill { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+        @media (max-width: 650px) { .report-body { padding: 15px; } .student-strip { padding: 12px 15px; font-size: 11px; } .subjects-table { font-size: 10px; } .signatures { grid-template-columns: 1fr; gap: 15px; } .school-name { font-size: 17px; } }
     </style>
 </head>
 <body>
 
-    <!-- Action Buttons -->
     <div class="action-bar">
         <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
         <button class="btn btn-pdf" onclick="downloadPDF()">📥 PDF</button>
@@ -222,18 +75,14 @@
         <button class="btn btn-back" onclick="window.location.href='dashboard.html'">🔙 Dashboard</button>
     </div>
 
-    <!-- Report Card -->
     <div class="report-card" id="reportCard">
-
-        <!-- Cover Header -->
         <div class="report-cover">
             <div class="school-badge" id="schoolBadge">📚</div>
             <div class="school-name" id="schoolNameDisplay">EXCEL ACADEMY SCHOOL</div>
             <div class="report-subtitle">End of Term Report Card</div>
-            <div class="school-meta">📍 P.O. Box 25. Okadjakrom – Buem  | 📧 info@excelacademy.edu.gh | 📞 +233 [0] 249 233 065/ +233 [0] 209 462 376</div>
+            <div class="school-meta">📍 123 Education Lane, Accra | 📧 info@excelacademy.edu.gh | 📞 0302-123-456</div>
         </div>
 
-        <!-- Student Info -->
         <div class="student-strip">
             <div class="info-group">
                 <div class="info-item"><strong>Name:</strong> <span id="rptName">-</span></div>
@@ -247,10 +96,7 @@
             </div>
         </div>
 
-        <!-- Body -->
         <div class="report-body">
-
-            <!-- Academic Performance -->
             <div class="section-header"><span class="section-icon">📖</span><span class="section-title">Academic Performance</span></div>
             <div style="overflow-x:auto;">
                 <table class="subjects-table">
@@ -259,7 +105,6 @@
                 </table>
             </div>
 
-            <!-- Overall Summary -->
             <div class="summary-box">
                 <div class="big-score" id="overallAverage">-</div>
                 <div class="summary-label">Overall Average</div>
@@ -269,14 +114,12 @@
                     <div class="ranking-pos" id="classRankPosition">-</div>
                     <div class="ranking-detail" id="classRankDetail"></div>
                 </div>
-                <div id="top5Container" style="margin-top:12px;"></div>
+                <div id="top5Container"></div>
             </div>
 
-            <!-- Personality Development -->
             <div class="section-header"><span class="section-icon">🌟</span><span class="section-title">Personality Development</span></div>
             <div class="personality-grid" id="personalityGrid"></div>
 
-            <!-- Attendance & Promotion -->
             <div class="section-header"><span class="section-icon">📋</span><span class="section-title">Attendance & Promotion</span></div>
             <div class="info-row">
                 <div><span class="label">Total Attendance:</span><span class="val" id="rptAttendance">-</span></div>
@@ -285,7 +128,6 @@
                 <div><span class="label">Next Term Begins:</span><span class="val" id="rptNextTerm">-</span></div>
             </div>
 
-            <!-- Term & Vacation Dates -->
             <div class="section-header"><span class="section-icon">📅</span><span class="section-title">Term & Vacation Dates</span></div>
             <div class="info-row">
                 <div><span class="label">Term Opens:</span><span class="val" id="rptTermOpens">-</span></div>
@@ -293,35 +135,27 @@
                 <div><span class="label">Vacation Starts:</span><span class="val" id="rptVacationStarts">-</span></div>
                 <div><span class="label">Vacation Ends:</span><span class="val" id="rptVacationEnds">-</span></div>
             </div>
-            <div class="info-row">
-                <div><span class="label">Vacation Duration:</span><span class="val" id="rptVacationDuration">-</span></div>
-            </div>
+            <div class="info-row"><div><span class="label">Vacation Duration:</span><span class="val" id="rptVacationDuration">-</span></div></div>
 
-            <!-- Conduct & Interest -->
             <div class="info-row">
                 <div><span class="label">Conduct:</span><span class="val" id="rptConduct">-</span></div>
                 <div><span class="label">Interest:</span><span class="val" id="rptInterest">-</span></div>
             </div>
 
-            <!-- Remarks -->
             <div class="section-header"><span class="section-icon">💬</span><span class="section-title">Remarks</span></div>
             <div class="remarks-card"><strong>Class Teacher's Remarks</strong><br><span id="rptTeacherRemarks">-</span></div>
             <div class="remarks-card"><strong>Head Teacher's Remarks</strong><br><span id="rptHeadRemarks">-</span></div>
 
-            <!-- Signatures -->
             <div class="signatures">
                 <div class="sig-line">Class Teacher</div>
                 <div class="sig-line">Head Teacher</div>
                 <div class="sig-line">Parent / Guardian</div>
             </div>
         </div>
-
-        <!-- Footer -->
         <div class="report-footer">© <span id="rptYearFooter">2025</span> iTech Systems Solutions | Generated <span id="rptDate"></span></div>
     </div>
 
     <script>
-        // ==================== DATA ====================
         var subjectsByCategory = {
             'KG': ['Literacy', 'Numeracy', 'Creative Art', 'Religious and Moral Education', 'Phonics'],
             'LowerPrimary': ['English Language', 'Mathematics', 'Science', 'History', 'Religious and Moral Education', 'French', 'Creative Art', 'Phonics'],
@@ -332,7 +166,6 @@
         var student = null;
         var category = '';
 
-        // ==================== INIT ====================
         window.onload = function() {
             var studentData = localStorage.getItem('selectedStudent');
             if (studentData) { try { student = JSON.parse(studentData); } catch(e) { student = null; } }
@@ -359,7 +192,6 @@
             if (name) document.getElementById('schoolNameDisplay').textContent = name.toUpperCase();
         }
 
-        // ==================== SCORES ====================
         function loadScores() {
             var subjects = subjectsByCategory[category] || [];
             var tbody = document.getElementById('subjectsTableBody');
@@ -378,45 +210,34 @@
             var overallGrade = getGrade(avg);
             document.getElementById('overallAverage').textContent = avg > 0 ? avg.toFixed(1) + '%' : '-';
             document.getElementById('overallGradeDisplay').innerHTML = avg > 0 ? '<span class="grade-pill g-' + overallGrade + '" style="font-size:14px;padding:5px 14px;">Grade ' + overallGrade + ' - ' + getInterpretation(overallGrade) + '</span>' : '';
-            if (avg > 0) calculateRanking();
+            if (avg > 0) calculateClassRanking();
         }
 
-        // ==================== RANKING ====================
-        function calculateRanking() {
+        function calculateClassRanking() {
+            var currentClass = student.class;
             var allStudents = JSON.parse(localStorage.getItem('admin_students')) || [];
-            var classStudents = allStudents.filter(function(s) { return s.class === student.class; });
+            var classStudents = allStudents.filter(function(s) { return s.class === currentClass; });
             var rankings = [];
             classStudents.forEach(function(s) {
-                var sc = getStudentScores(s.id);
-                var a = average(sc);
-                if (a > 0) rankings.push({ id: s.id, name: s.name, average: a, grade: getGrade(a) });
+                var scores = getStudentScores(s.id);
+                var avg = calculateAverage(scores);
+                if (avg > 0) rankings.push({ id: s.id, name: s.name, average: avg, grade: getGrade(avg) });
             });
             rankings.sort(function(a, b) { return b.average - a.average; });
-            var pos = -1;
-            for (var i = 0; i < rankings.length; i++) { if (rankings[i].id === student.id) { pos = i + 1; break; } }
-            if (pos > 0) {
-                var pt = pos === 1 ? '1st' : (pos === 2 ? '2nd' : (pos === 3 ? '3rd' : pos + 'th'));
-                var medal = pos === 1 ? '🥇 ' : (pos === 2 ? '🥈 ' : (pos === 3 ? '🥉 ' : ''));
-                document.getElementById('classRankPosition').innerHTML = medal + pt + ' <span style="font-size:14px;">out of ' + rankings.length + '</span>';
-                if (rankings.length > 0) document.getElementById('classRankDetail').textContent = 'Top Performer: ' + rankings[0].name + ' (' + rankings[0].average.toFixed(1) + '%)';
-            } else { document.getElementById('classRankPosition').textContent = 'Not Ranked'; document.getElementById('classRankDetail').textContent = 'Enter scores to see ranking'; }
-            buildTop5(rankings);
+            var position = -1;
+            for (var i = 0; i < rankings.length; i++) { if (rankings[i].id === student.id) { position = i + 1; break; } }
+            if (position > 0) {
+                var posText = position === 1 ? '1st' : (position === 2 ? '2nd' : (position === 3 ? '3rd' : position + 'th'));
+                var medal = position === 1 ? '🥇 ' : (position === 2 ? '🥈 ' : (position === 3 ? '🥉 ' : ''));
+                document.getElementById('classRankPosition').innerHTML = medal + posText + ' <span style="font-size:16px;">out of ' + rankings.length + '</span>';
+                document.getElementById('classRankDetail').textContent = '';
+            } else {
+                document.getElementById('classRankPosition').textContent = 'Not Ranked';
+                document.getElementById('classRankDetail').textContent = '';
+            }
+            document.getElementById('top5Container').innerHTML = '';
         }
 
-        function buildTop5(rankings) {
-            var top5 = rankings.slice(0, 5);
-            if (top5.length === 0) { document.getElementById('top5Container').innerHTML = ''; return; }
-            var html = '<table class="top5-table"><thead><tr><th>#</th><th>Name</th><th>Avg</th><th>Grade</th></tr></thead><tbody>';
-            top5.forEach(function(r, i) {
-                var medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : ''));
-                var isCur = r.id === student.id;
-                html += '<tr class="' + (isCur ? 'hl' : '') + '"><td>' + medal + ' ' + (i + 1) + '</td><td>' + r.name + (isCur ? ' ⭐' : '') + '</td><td>' + r.average.toFixed(1) + '%</td><td>' + r.grade + '</td></tr>';
-            });
-            html += '</tbody></table>';
-            document.getElementById('top5Container').innerHTML = html;
-        }
-
-        // ==================== PERSONALITY ====================
         function loadPersonality() {
             var grid = document.getElementById('personalityGrid');
             var html = '';
@@ -432,7 +253,6 @@
             grid.innerHTML = html;
         }
 
-        // ==================== SETTINGS ====================
         function loadSavedSettings() {
             var key = 'settings_' + student.id;
             var saved = localStorage.getItem(key);
@@ -456,7 +276,6 @@
             }
         }
 
-        // ==================== HELPERS ====================
         function getStudentScores(id) {
             var scores = [];
             for (var i = 0; i < localStorage.length; i++) {
@@ -467,12 +286,12 @@
             }
             return scores;
         }
-        function average(s) { return s.length === 0 ? 0 : s.reduce(function(a, b) { return a + b; }, 0) / s.length; }
+
+        function calculateAverage(s) { return s.length === 0 ? 0 : s.reduce(function(a, b) { return a + b; }, 0) / s.length; }
         function getGrade(s) { if (s >= 80) return 'A'; if (s >= 70) return 'B'; if (s >= 60) return 'C'; if (s >= 50) return 'D'; if (s >= 40) return 'E'; return 'F'; }
         function getInterpretation(g) { var m = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' }; return m[g] || ''; }
         function getRemarks(s) { if (s >= 80) return 'Outstanding'; if (s >= 70) return 'Very Good Work'; if (s >= 60) return 'Good Effort'; if (s >= 50) return 'Satisfactory'; if (s >= 40) return 'Needs Improvement'; return 'See Teacher'; }
 
-        // ==================== BUTTONS ====================
         function downloadPDF() { var b = document.querySelector('.action-bar'); var o = b.style.display; b.style.display = 'none'; window.print(); setTimeout(function() { b.style.display = o; }, 1500); }
         function shareWhatsApp() {
             var nm = student.name, cl = student.class, tm = localStorage.getItem('currentTerm'), yr = localStorage.getItem('currentAcademicYear');
